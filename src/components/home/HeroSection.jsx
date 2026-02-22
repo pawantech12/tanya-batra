@@ -2,6 +2,7 @@ import Link from "next/link";
 import React from "react";
 import { Button } from "../ui/button";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
+import Image from "next/image";
 
 const HeroSection = () => {
   return (
@@ -182,93 +183,42 @@ const HeroSection = () => {
 
           {/* RIGHT VISUAL */}
           <div className="relative flex justify-center">
-            {/* Main Developer Panel */}
-            <div
-              className="relative w-[440px] rounded-xl
-      border border-neutral-200/20
-      bg-[#1e1e2f] dark:bg-[#0f111a]
-      shadow-[0_25px_60px_rgba(0,0,0,0.15)] overflow-hidden"
-            >
-              {/* Top Gradient Accent */}
-              <div className="h-[4px] w-full bg-gradient-to-r from-[#496cbf] via-indigo-500 to-[#496cbf] animate-gradient-x" />
-
-              {/* Header / Fake Tab Bar */}
-              <div className="flex items-center justify-between px-5 py-3 border-b border-neutral-700">
-                <div className="flex items-center gap-2">
-                  <span className="h-3 w-3 rounded-full bg-red-400" />
-                  <span className="h-3 w-3 rounded-full bg-yellow-400" />
-                  <span className="h-3 w-3 rounded-full bg-green-400" />
-                </div>
-                <span className="text-xs text-neutral-400 font-mono">
-                  developer.profile.ts
-                </span>
-              </div>
-
-              {/* Code Section */}
-              <div className="px-6 py-6 font-mono text-sm leading-relaxed relative overflow-x-auto">
-                {/* Line Numbers */}
-                <div className="absolute top-6 left-4 flex flex-col items-end gap-1 text-neutral-500 select-none font-mono text-xs">
-                  {[...Array(12)].map((_, i) => (
-                    <span key={i}>{i + 1}</span>
-                  ))}
-                </div>
-
-                {/* Syntax Highlighted Code */}
-                <pre className="ml-12 text-neutral-200 dark:text-neutral-100">
-                  <code>
-                    <span className="text-[#8be9fd]">const</span> developer =
-                    &#123;{"\n"}
-                    &nbsp;&nbsp;<span className="text-[#ff79c6]">
-                      name
-                    </span>:{" "}
-                    <span className="text-[#f1fa8c]">"Tanya Batra"</span>,{"\n"}
-                    &nbsp;&nbsp;<span className="text-[#ff79c6]">
-                      role
-                    </span>:{" "}
-                    <span className="text-[#f1fa8c]">"Laravel Developer"</span>,
-                    {"\n"}
-                    &nbsp;&nbsp;
-                    <span className="text-[#ff79c6]">experience</span>:{" "}
-                    <span className="text-[#f1fa8c]">"1.5 Years"</span>,{"\n"}
-                    &nbsp;&nbsp;<span className="text-[#ff79c6]">
-                      company
-                    </span>:{" "}
-                    <span className="text-[#f1fa8c]">"Buildupnet"</span>,
-                    {"\n\n"}
-                    &nbsp;&nbsp;<span className="text-[#8be9fd]">stack</span>: [
-                    <span className="text-[#f1fa8c]">
-                      "Laravel", "PHP", "MySQL", "REST APIs"
-                    </span>
-                    ],{"\n\n"}
-                    &nbsp;&nbsp;<span className="text-[#8be9fd]">focus</span>: [
-                    <span className="text-[#f1fa8c]">
-                      "Clean Architecture", "Scalable Systems", "Structured
-                      Workflows"
-                    </span>
-                    ]{"\n"}
-                    &#125;;{"\n\n"}
-                    <span className="text-[#50fa7b]">export default</span>{" "}
-                    developer;
-                  </code>
-                </pre>
-              </div>
+            {/* Outer Gradient Glow Layer */}
+            <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+              <div className="h-[420px] w-[420px] sm:h-[480px] sm:w-[480px] lg:h-[540px] lg:w-[540px] rounded-full bg-gradient-to-br from-[#496cbf]/30 via-indigo-400/20 to-transparent blur-[120px]" />
             </div>
 
-            {/* Layered Glow Backgrounds */}
+            {/* Glass Card Container */}
             <div
-              className="absolute -bottom-20 -right-20 h-64 w-64 rounded-full
-      bg-[#496cbf]/30 blur-[140px] animate-pulse-slow"
-            />
-            <div
-              className="absolute -top-20 -left-16 h-48 w-48 rounded-full
-      bg-indigo-500/25 blur-[120px] animate-pulse-slow"
-            />
+              className="relative w-[420px] sm:w-[480px] lg:w-[520px]
+    rounded-[32px]
+    border border-neutral-200/40 dark:border-neutral-800/60
+    bg-white/60 dark:bg-neutral-900/60
+    backdrop-blur-2xl
+    shadow-[0_40px_100px_rgba(73,108,191,0.25)]
+    transition-all duration-500
+    hover:-translate-y-3 hover:shadow-[0_60px_140px_rgba(73,108,191,0.35)]"
+            >
+              {/* Subtle Top Gradient Line */}
+              <div className="h-[3px] w-full rounded-t-[32px] bg-gradient-to-r from-transparent via-[#496cbf] to-transparent" />
 
-            {/* Holographic Accent */}
-            <div
-              className="absolute -top-10 right-0 h-[220px] w-[220px] rounded-full
-      bg-gradient-to-tr from-[#496cbf]/40 to-indigo-500/20 blur-[180px]"
-            />
+              {/* Inner Soft Border Glow */}
+              <div className="absolute inset-0 rounded-[32px] ring-1 ring-inset ring-[#496cbf]/10 pointer-events-none" />
+
+              {/* Image Wrapper */}
+              <div className="relative p-10">
+                <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-neutral-100 to-white dark:from-neutral-800 dark:to-neutral-900">
+                  <Image
+                    src="/illustration.png"
+                    alt="Tanya Batra - Laravel Developer"
+                    width={600}
+                    height={500}
+                    className="w-full h-auto object-contain transition-transform duration-700 hover:scale-[1.03]"
+                    priority
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

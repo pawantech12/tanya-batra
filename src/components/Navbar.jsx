@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, Code2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import Image from "next/image";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -27,28 +28,15 @@ export default function Navbar() {
           href="/"
           className="group relative flex items-center gap-4 select-none"
         >
-          {/* Signature Mark */}
-          <div
-            className="relative flex h-11 w-11 items-center justify-center rounded-2xl
-    bg-gradient-to-br from-[#496cbf]/90 to-indigo-600
-    shadow-lg ring-1 ring-[#496cbf]/40
-    transition-all duration-300 group-hover:scale-105"
-          >
-            {/* Custom T Symbol */}
-            <span className="font-mono text-white text-xl font-bold tracking-tight">
-              {`{T}`}
-            </span>
-          </div>
-
-          {/* Brand */}
-          <div className="flex flex-col leading-tight">
-            <span className="text-lg font-semibold tracking-tight">
-              Tanya <span className="text-[#496cbf]">Batra</span>
-            </span>
-            <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
-              Full Stack Engineer
-            </span>
-          </div>
+          <Image
+            src={"/logo.png"}
+            alt="tanya batra portfolio logo"
+            width={0}
+            height={0}
+            sizes="100vw"
+            className="w-fit h-12"
+            priority
+          />
         </Link>
 
         {/* Desktop Navigation */}

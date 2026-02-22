@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Code2, Mail, ArrowRight, Github, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -18,22 +19,17 @@ export default function Footer() {
           <div>
             <Link
               href="/"
-              className="group flex items-center gap-4 select-none"
+              className="group relative flex items-center gap-4 select-none"
             >
-              <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#496cbf] to-indigo-600 shadow-xl ring-1 ring-[#496cbf]/40 transition duration-300 group-hover:scale-105">
-                <span className="font-mono text-white text-lg font-bold">
-                  {`{T}`}
-                </span>
-              </div>
-
-              <div className="leading-tight">
-                <span className="text-lg font-semibold tracking-tight">
-                  Tanya <span className="text-[#496cbf]">Batra</span>
-                </span>
-                <span className="block text-[11px] uppercase tracking-wider text-muted-foreground">
-                  Full Stack Engineer
-                </span>
-              </div>
+              <Image
+                src={"/logo.png"}
+                alt="tanya batra portfolio logo"
+                width={0}
+                height={0}
+                sizes="100vw"
+                className="w-fit h-12"
+                priority
+              />
             </Link>
 
             <p className="mt-5 max-w-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
@@ -50,11 +46,11 @@ export default function Footer() {
 
             <ul className="space-y-3 text-sm">
               {[
+                { name: "Home", href: "/" },
                 { name: "About", href: "/about" },
                 { name: "Projects", href: "/projects" },
-                { name: "Case Studies", href: "/case-studies" },
-                { name: "Blog", href: "/blog" },
-                { name: "Resume", href: "/resume" },
+                { name: "Services", href: "/services" },
+                { name: "Contact", href: "/contact" },
               ].map((item) => (
                 <li key={item.name}>
                   <Link
@@ -93,11 +89,11 @@ export default function Footer() {
               </Link>
 
               <Link
-                href="mailto:your@email.com"
+                href="mailto:batraofficial.02@gmail.com"
                 className="inline-flex items-center gap-2 text-sm font-medium text-[#496cbf] hover:underline underline-offset-4"
               >
                 <Mail className="h-4 w-4" />
-                your@email.com
+                batraofficial.02@gmail.com
               </Link>
             </div>
           </div>
@@ -112,7 +108,7 @@ export default function Footer() {
 
           <div className="flex items-center gap-6">
             <Link
-              href="https://github.com"
+              href="https://github.com/tanya-batra"
               target="_blank"
               className="group transition hover:text-[#496cbf]"
             >
@@ -120,7 +116,7 @@ export default function Footer() {
             </Link>
 
             <Link
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/in/tanyabatra7814"
               target="_blank"
               className="group transition hover:text-[#496cbf]"
             >

@@ -1,23 +1,27 @@
+"use client";
+import axios from "axios";
 import { Cpu } from "lucide-react";
+import { useEffect, useState } from "react";
+import Loader from "../loader";
 
 export default function TechStackSection() {
-  const techStack = [
-    "Next.js",
-    "React",
-    "TypeScript",
-    "Tailwind CSS",
-    "shadcn/ui",
-    "Laravel",
-    "PHP",
-    "MySQL",
-    "PostgreSQL",
-    "REST APIs",
-    "Node.js",
-    "Git",
-    "Docker",
-    "Prisma",
-    "Framer Motion",
-  ];
+  const [skills, setSkills] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get("/api/skills");
+        setSkills(res.data);
+      } catch (error) {
+        console.log("Error while fetching skills", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <section
@@ -61,11 +65,14 @@ export default function TechStackSection() {
         </div>
 
         {/* ================= STACK GRID ================= */}
-        <div className="flex flex-wrap justify-center gap-4">
-          {techStack.map((tech, index) => (
-            <div
-              key={index}
-              className="
+        {loading ? (
+          <Loader text="Loading Skills..." />
+        ) : (
+          <div className="flex flex-wrap justify-center gap-4">
+            {skills.map((tech, index) => (
+              <div
+                key={index}
+                className="
               group relative
               rounded-2xl
               p-[1px]
@@ -73,10 +80,10 @@ export default function TechStackSection() {
               transition-all duration-300
               hover:scale-[1.04] overflow-hidden
             "
-            >
-              {/* Inner Card */}
-              <div
-                className="
+              >
+                {/* Inner Card */}
+                <div
+                  className="
                 relative rounded-2xl
                 bg-white dark:bg-[#111827]
                 border border-neutral-200 dark:border-white/10
@@ -86,27 +93,28 @@ export default function TechStackSection() {
                 group-hover:border-[#496cbf]/40
                 group-hover:shadow-[0_15px_40px_rgba(73,108,191,0.25)]
               "
-              >
-                {/* Subtle Top Accent Line */}
-                <div className="absolute top-0 left-0 h-[2px] w-0 bg-gradient-to-r from-[#496cbf] to-indigo-500 group-hover:w-full transition-all duration-500 rounded-t-2xl" />
+                >
+                  {/* Subtle Top Accent Line */}
+                  <div className="absolute top-0 left-0 h-[2px] w-0 bg-gradient-to-r from-[#496cbf] to-indigo-500 group-hover:w-full transition-all duration-500 rounded-t-2xl" />
 
-                {/* Glow Layer */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#496cbf]/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  {/* Glow Layer */}
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#496cbf]/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                {/* Content */}
-                <div className="relative z-10 flex items-center gap-3">
-                  {/* Status Dot (Dev Inspired) */}
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#496cbf] shadow-[0_0_8px_rgba(73,108,191,0.8)] group-hover:bg-indigo-500 transition-colors duration-300" />
+                  {/* Content */}
+                  <div className="relative z-10 flex items-center gap-3">
+                    {/* Status Dot (Dev Inspired) */}
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#496cbf] shadow-[0_0_8px_rgba(73,108,191,0.8)] group-hover:bg-indigo-500 transition-colors duration-300" />
 
-                  {/* Skill Name */}
-                  <span className="text-sm font-medium tracking-wide text-gray-800 dark:text-gray-200">
-                    {tech}
-                  </span>
+                    {/* Skill Name */}
+                    <span className="text-sm font-medium tracking-wide text-gray-800 dark:text-gray-200">
+                      {tech.name}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

@@ -44,15 +44,12 @@ const TrustSection = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { value: "10+", label: "Projects Completed", accent: "#496cbf" },
-            { value: "2+", label: "Years Experience", accent: "#496cbf" },
-            {
-              value: "5+",
-              label: "Technologies Mastered",
-              accent: "#496cbf",
-            },
+            { value: "25+", label: "Projects Completed", accent: "#496cbf" },
+            { value: "5+", label: "Certifications Earned", accent: "#496cbf" },
+            { value: "20+", label: "Happy Clients", accent: "#496cbf" },
+            { value: "1.5+", label: "Years of Experience", accent: "#496cbf" },
           ].map((stat, idx) => (
             <div
               key={idx}

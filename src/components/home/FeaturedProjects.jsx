@@ -2,35 +2,29 @@
 
 import Link from "next/link";
 import { ExternalLink, Laptop } from "lucide-react";
-
-const featuredProjects = [
-  {
-    title: "Flip4Sale E-commerce",
-    description:
-      "A React & Node.js based marketplace platform with Razorpay integration for seamless online payments.",
-    image: "/placeholder.png",
-    tech: ["React", "Node.js", "TailwindCSS", "MongoDB"],
-    link: "/projects/flip4sale",
-  },
-  {
-    title: "ErrorHub Debugging Platform",
-    description:
-      "A SaaS platform to track, debug, and visualize code errors in real-time.",
-    image: "/placeholder.png",
-    tech: ["Next.js", "TypeScript", "Vercel", "REST APIs"],
-    link: "/projects/errorhub",
-  },
-  {
-    title: "Tic Tac Toe AI",
-    description:
-      "A responsive React app featuring Player vs AI mode with minimax algorithm.",
-    image: "/placeholder.png",
-    tech: ["React", "JavaScript", "TailwindCSS", "AI Logic"],
-    link: "/projects/tictactoe",
-  },
-];
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Loader from "../loader";
 
 export default function FeaturedProjects() {
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get("/api/projects");
+        setProjects(res.data);
+      } catch (error) {
+        console.log("Error while fetching projects", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <section className="relative py-24 max-sm:py-16 px-4 bg-gray-50 dark:bg-black/80">
       {/* Section Header */}
@@ -70,66 +64,73 @@ export default function FeaturedProjects() {
       </div>
 
       {/* Projects Grid */}
-      <div className="max-w-7xl mx-auto  sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {featuredProjects.map((project) => (
-          <Link
-            key={project.title}
-            href={project.link}
-            className="group relative block rounded-xl bg-white shadow-lg overflow-hidden transition-transform duration-500 hover:-translate-y-2 hover:scale-[1.03]"
-          >
-            {/* Project Image */}
-            <div className="h-56 w-full relative overflow-hidden rounded-t-xl">
-              <img
-                src={project.image}
-                alt={project.title}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
+      {loading ? (
+        <Loader text="Loading Projects..." />
+      ) : (
+        <div className="max-w-7xl mx-auto  sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {projects.map((project) => (
+            <Link
+              key={project.title}
+              href={`/projects/${project._id}`}
+              className="group relative block rounded-xl bg-white shadow-lg overflow-hidden transition-transform duration-500 hover:-translate-y-2 hover:scale-[1.03]"
+            >
+              {/* Project Image */}
+              <div className="h-56 w-full relative overflow-hidden rounded-t-xl">
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
 
-              {/* Gradient Glow Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#496cbf]/20 via-indigo-300/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </div>
-
-            {/* Project Content */}
-            <div className="px-6 py-6 relative z-10">
-              {/* Title + Icon */}
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900 tracking-tight">
-                  {project.title}
-                </h3>
-                <ExternalLink className="h-5 w-5 text-[#496cbf] transition-transform duration-300 group-hover:translate-x-1" />
+                {/* Gradient Glow Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#496cbf]/20 via-indigo-300/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
 
-              {/* Description */}
-              <p className="mt-2 text-sm text-gray-600 leading-relaxed">
-                {project.description}
-              </p>
+              {/* Project Content */}
+              <div className="px-6 py-6 relative z-10">
+                {/* Title + Icon */}
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900 tracking-tight">
+                    {project.title}
+                  </h3>
+                  <ExternalLink className="h-5 w-5 text-[#496cbf] transition-transform duration-300 group-hover:translate-x-1" />
+                </div>
 
-              {/* Tech Tags */}
-              <div className="mt-4 flex flex-wrap gap-2">
-                {project.tech.map((tech) => (
-                  <span
-                    key={tech}
-                    className="flex items-center gap-1 text-xs font-mono text-[#496cbf] bg-[#496cbf]/10 px-2 py-1 rounded-lg transition-all duration-300 hover:bg-[#496cbf]/20 hover:text-[#3b5199]"
-                  >
-                    <ExternalLink className="h-3 w-3 text-[#496cbf]" /> {tech}
+                {/* Description */}
+                <p className="mt-2 text-sm text-gray-600 leading-relaxed">
+                  {project.description?.length > 100
+                    ? project.description.slice(0, 100) + "..."
+                    : project.description}
+                </p>
+
+                {/* Tech Tags */}
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {project.keywords.map((keyword) => (
+                    <span
+                      key={keyword}
+                      className="flex items-center gap-1 text-xs font-mono text-[#496cbf] bg-[#496cbf]/10 px-2 py-1 rounded-lg transition-all duration-300 hover:bg-[#496cbf]/20 hover:text-[#3b5199]"
+                    >
+                      <ExternalLink className="h-3 w-3 text-[#496cbf]" />{" "}
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Hover CTA */}
+                <div className="mt-4">
+                  <span className="inline-flex items-center text-sm font-medium text-[#496cbf] gap-1 group-hover:underline">
+                    View Project <ExternalLink className="h-4 w-4" />
                   </span>
-                ))}
+                </div>
               </div>
 
-              {/* Hover CTA */}
-              <div className="mt-4">
-                <span className="inline-flex items-center text-sm font-medium text-[#496cbf] gap-1 group-hover:underline">
-                  View Project <ExternalLink className="h-4 w-4" />
-                </span>
-              </div>
-            </div>
-
-            {/* Background Glow Accents */}
-            <div className="absolute -bottom-12 -right-12 h-36 w-36 rounded-full bg-[#496cbf]/25 blur-[120px] animate-pulse-slow" />
-            <div className="absolute -top-10 -left-10 h-28 w-28 rounded-full bg-indigo-300/25 blur-[100px] animate-pulse-slow" />
-          </Link>
-        ))}
-      </div>
+              {/* Background Glow Accents */}
+              <div className="absolute -bottom-12 -right-12 h-36 w-36 rounded-full bg-[#496cbf]/25 blur-[120px] animate-pulse-slow" />
+              <div className="absolute -top-10 -left-10 h-28 w-28 rounded-full bg-indigo-300/25 blur-[100px] animate-pulse-slow" />
+            </Link>
+          ))}
+        </div>
+      )}
       <div className="mt-12 text-center">
         <Link href="/projects">
           <button
