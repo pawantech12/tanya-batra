@@ -119,7 +119,7 @@ const CtaSection = () => {
 
                   <div className="flex flex-wrap justify-center md:justify-end items-center gap-3 text-sm">
                     <Link
-                      href="/dummy-resume.pdf"
+                      href="/resume.pdf"
                       target="_blank"
                       className="font-medium text-[#496cbf] hover:underline underline-offset-4"
                     >

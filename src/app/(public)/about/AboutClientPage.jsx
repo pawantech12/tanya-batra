@@ -34,30 +34,30 @@ const AboutClientPage = () => {
   return (
     <main className="mx-auto max-w-7xl px-4 md:px-8">
       {/* Intro */}
-      <section className="py-24 max-sm:py-16">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+      <section className="py-16 sm:py-20 md:py-24 ">
+        <div className="grid md:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
           {/* LEFT CONTENT */}
-          <div>
+          <div className="order-2 md:order-1">
             {/* Badge */}
             <div
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full 
-        border border-[#496cbf]/30 bg-[#496cbf]/10 text-[#496cbf] text-sm font-medium mb-6"
+        border border-[#496cbf]/30 bg-[#496cbf]/10 
+        text-[#496cbf] text-xs sm:text-sm font-medium mb-6"
             >
               Laravel Developer • 1.5+ Years Experience
             </div>
 
             {/* Heading */}
-            <h1 className="text-4xl md:text-5xl font-semibold tracking-tight leading-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight leading-tight mb-6">
               Building Reliable Backend Systems
-              <br />
+              <br className="hidden sm:block" />
               with <span className="text-[#496cbf]">Laravel & PHP</span>
             </h1>
 
             {/* Description */}
             <div>
-              <p className="relative text-lg leading-relaxed text-neutral-700 dark:text-neutral-300 mb-6 italic">
-                {/* Accent line */}
-                <span className="absolute -left-4 top-1 h-full w-[3px] rounded-full bg-[#496cbf]" />
+              <p className="relative text-base sm:text-lg leading-relaxed text-neutral-700 dark:text-neutral-300 mb-6 italic pl-4">
+                <span className="absolute left-0 top-1 h-full w-[3px] rounded-full bg-[#496cbf]" />
                 I’m{" "}
                 <span className="font-semibold text-foreground">
                   Tanya Batra
@@ -70,7 +70,7 @@ const AboutClientPage = () => {
                 designed for real-world usage — not demos or side projects.
               </p>
 
-              <p className="text-lg leading-relaxed text-neutral-700">
+              <p className="text-base sm:text-lg leading-relaxed text-neutral-700 dark:text-neutral-300">
                 Currently working at{" "}
                 <span className="font-medium text-foreground">Buildupnet</span>,
                 I contribute to live production systems including an e-commerce
@@ -82,23 +82,24 @@ const AboutClientPage = () => {
           </div>
 
           {/* RIGHT IMAGE */}
-          <div className="relative flex justify-center">
+          <div className="relative flex justify-center order-1 md:order-2 mb-5 md:mb-0">
             {/* Accent Glow */}
-            <div className="absolute -inset-6 bg-[#496cbf]/10 blur-3xl rounded-full" />
+            <div className="absolute -inset-4 sm:-inset-6 bg-[#496cbf]/10 blur-3xl rounded-full" />
 
             {/* Image Container */}
             <div
               className="relative rounded-2xl overflow-hidden border 
         border-neutral-200/40 dark:border-neutral-800
-        shadow-lg h-[500px] w-[400px]"
+        shadow-lg
+        w-[320px] md:w-[380px] lg:w-[420px]
+        h-[400px] md:h-[480px] lg:h-[520px]"
             >
               <Image
-                src="/about.jpeg" // <-- replace with your image path
+                src="/about.jpeg"
                 alt="Tanya Batra - Laravel Developer"
-                width={0}
-                height={0}
-                sizes="100vw"
-                className="w-full h-full object-cover"
+                fill
+                sizes="(max-width: 768px) 100vw, 400px"
+                className="object-cover"
                 priority
               />
             </div>

@@ -99,7 +99,7 @@ export default function Navbar() {
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
           {/* Resume Button – Developer Style */}
-          <Link href="/dummy-resume.pdf" target="_blank">
+          <Link href="/resume.pdf" target="_blank">
             <Button
               variant="ghost"
               className="group relative overflow-hidden rounded-xl px-6 py-2.5
@@ -280,7 +280,7 @@ export default function Navbar() {
               <div className="px-6 pb-8 pt-6 border-t border-neutral-200/40 dark:border-neutral-800/40 flex flex-col gap-3">
                 <Link
                   onClick={() => setOpen(false)}
-                  href="/dummy-resume.pdf"
+                  href="/resume.pdf"
                   target="_blank"
                 >
                   <Button
