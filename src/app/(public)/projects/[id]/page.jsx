@@ -9,7 +9,7 @@ export async function generateMetadata({ params }) {
   const { id } = resolvedParams;
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/projects/${id}`
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/projects/${id}`,
   );
 
   const project = await res.json();
@@ -21,9 +21,9 @@ export async function generateMetadata({ params }) {
   }
 
   return {
-    title: `${project.title} | Tanya Batra Portfolio`,
+    title: `${project?.title} | Tanya Batra Portfolio`,
     description: project.description,
-    keywords: project.keywords.join(", "),
+    keywords: project?.keywords?.join(", "),
   };
 }
 

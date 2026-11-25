@@ -2,48 +2,42 @@
 
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { Sidebar } from "@/components/admin/Sidebar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function AdminLayout({ children }) {
   const [open, setOpen] = useState(false);
 
+  const openSidebar = () => {
+    setOpen(true);
+  };
+
+  const closeSidebar = () => {
+    setOpen(false);
+  };
+
   return (
-    <div className="relative flex min-h-screen overflow-hidden bg-gradient-to-br from-[#f8fafc] via-white to-[#eef2ff] dark:from-black dark:via-neutral-950 dark:to-black">
-      {/* Background Grid */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, #496cbf 1px, transparent 1px), linear-gradient(to bottom, #496cbf 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
-
-      {/* Glow Effects */}
-      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-[#496cbf]/20 blur-[160px] rounded-full" />
-      <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-indigo-400/20 blur-[160px] rounded-full" />
-
-      {/* MOBILE OVERLAY */}
+    <div className="flex h-dvh min-h-screen w-full overflow-hidden bg-[#F8FAFC]">
       {open && (
-        <div
-          onClick={() => setOpen(false)}
-          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
+        <button
+          type="button"
+          aria-label="Close sidebar overlay"
+          onClick={closeSidebar}
+          className="fixed inset-0 z-40 bg-[#182238]/35 lg:hidden"
         />
       )}
 
-      {/* SIDEBAR */}
       <div
-        className={`fixed z-50 inset-y-0 left-0 w-72 transform transition-transform duration-300 ease-in-out
-        ${open ? "translate-x-0" : "-translate-x-full"}
-        lg:static lg:translate-x-0`}
+        className={`fixed inset-y-0 left-0 z-50 h-dvh w-[260px] transform transition-transform duration-300 ease-in-out sm:w-[272px] lg:static lg:z-10 lg:h-dvh lg:translate-x-0 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
-        <Sidebar onMenuClick={() => setOpen(false)} />
+        <Sidebar onMenuClick={closeSidebar} />
       </div>
 
-      {/* MAIN AREA */}
-      <div className="flex-1 flex flex-col relative z-10">
-        <AdminHeader onMenuClick={() => setOpen(true)} />
-        <main className=" p-6 md:p-10 h-[85vh] overflow-y-auto">
+      <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col">
+        <AdminHeader onMenuClick={openSidebar} />
+
+        <main className="min-h-0 flex-1 overflow-y-auto bg-[#F8FAFC]">
           {children}
         </main>
       </div>

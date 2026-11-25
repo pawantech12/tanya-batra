@@ -1,113 +1,206 @@
-import { ShieldCheck } from "lucide-react";
-import React from "react";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { CheckCircle2, FileText } from "lucide-react";
+
+const trustPoints = [
+  "Active production deployments at Buildupnet",
+  "Real-world e-commerce & SaaS systems shipped",
+  "Secure REST API architecture across projects",
+];
+
+const statistics = [
+  {
+    value: 25,
+    suffix: "+",
+    label: "Projects Completed",
+    description: "Across backend & full stack",
+  },
+  {
+    value: 5,
+    suffix: "+",
+    label: "Certifications Earned",
+    description: "Verified technical credentials",
+  },
+  {
+    value: 20,
+    suffix: "+",
+    label: "Happy Clients",
+    description: "Satisfied with delivered results",
+  },
+  {
+    value: 1.5,
+    suffix: "+",
+    label: "Years of Experience",
+    description: "Hands-on engineering work",
+  },
+];
 
 const TrustSection = () => {
+  const sectionRef = useRef(null);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+
+    if (!section || hasStarted) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setHasStarted(true);
+          observer.disconnect();
+        }
+      },
+      {
+        threshold: 0.2,
+      },
+    );
+
+    observer.observe(section);
+
+    return () => observer.disconnect();
+  }, [hasStarted]);
+
+  useEffect(() => {
+    if (!hasStarted) return;
+
+    const duration = 1800;
+    let animationFrame;
+    let startTime = null;
+
+    const animate = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+
+      const elapsed = timestamp - startTime;
+      const rawProgress = Math.min(elapsed / duration, 1);
+
+      const easedProgress = 1 - Math.pow(1 - rawProgress, 3);
+
+      setProgress(easedProgress);
+
+      if (rawProgress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, [hasStarted]);
+
   return (
     <section
+      ref={sectionRef}
       id="trust"
-      className="relative bg-white dark:bg-[#0f111a] py-24 max-sm:py-16"
       aria-label="Developer Trust Section"
+      className="w-full bg-[#F8FAFC] py-16 sm:py-20 lg:py-[88px]"
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-10 relative">
-          <div
-            className="mx-auto w-fit flex items-center gap-2 px-4 py-1.5 rounded-full 
-  bg-[#496cbf]/10
-  backdrop-blur-md  ring-1 ring-[#496cbf]/30
-  hover:scale-105 transition-transform duration-300
-  group"
-          >
-            {/* Icon with subtle glow */}
-            <ShieldCheck className="h-4 w-4 text-[#496cbf] group-hover:text-indigo-500 transition-colors duration-300" />
+      <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-0">
+        <div className="grid grid-cols-1 gap-9 md:grid-cols-[1.2fr_0.8fr] md:gap-12 lg:gap-20">
+          <div className="max-w-[590px]">
+            <div className="flex items-center gap-[11px]">
+              <span className="h-[2px] w-[28px] bg-[#496CBF]" />
+              <span className="font-mono text-[10px] font-medium uppercase tracking-[0.25px] text-[#496CBF]">
+                Professional Experience
+              </span>
+            </div>
 
-            {/* Text */}
-            <span className="text-xs font-semibold text-[#496cbf] group-hover:text-indigo-500 tracking-tight">
-              Trusted Developer
+            <h2 className="mt-[25px] max-w-[510px] font-heading text-[34px] font-bold leading-[1.18] tracking-[-1.3px] text-[#182238] sm:text-[40px] lg:text-[44px] lg:leading-[1.18]">
+              Experience built through real-world engineering.
+            </h2>
+          </div>
+
+          <div className="pt-0 md:pt-[2px] lg:pl-[5px]">
+            <p className="max-w-[480px] font-body text-[15px] font-normal leading-[27px] text-[#667A9A] sm:text-[16px]">
+              Proven experience, multiple successful projects, and mastery of
+              modern technologies. Clean code, scalable systems, and a
+              developer-first approach.
+            </p>
+
+            <div className="mt-[17px] flex flex-col gap-[9px]">
+              {trustPoints.map((point) => (
+                <div key={point} className="flex items-start gap-[9px]">
+                  <CheckCircle2
+                    size={15}
+                    strokeWidth={1.8}
+                    className="mt-[2px] shrink-0 text-[#16C76A]"
+                  />
+                  <span className="font-body text-[13px] leading-[19px] text-[#667A9A] sm:text-[14px]">
+                    {point}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-[62px] h-px w-full bg-[#DFE6F1] sm:mt-[66px] lg:mt-[64px]" />
+
+        <div className="grid grid-cols-2 gap-y-10 py-[65px] sm:py-[72px] lg:grid-cols-4 lg:gap-y-0 lg:py-[86px]">
+          {statistics.map((stat, index) => {
+            const currentValue = stat.value * progress;
+            const displayValue = Number.isInteger(stat.value)
+              ? Math.floor(currentValue)
+              : currentValue.toFixed(1);
+
+            return (
+              <div
+                key={stat.label}
+                className={`relative flex flex-col items-center justify-center text-center ${
+                  index === 1 || index === 3 ? "border-l border-[#DFE6F1]" : ""
+                } ${index === 2 ? "lg:border-l lg:border-[#DFE6F1]" : ""}`}
+              >
+                <h3 className="font-heading text-[44px] font-bold leading-[1.1] tracking-[-1.5px] text-[#182238] sm:text-[52px] lg:text-[56px]">
+                  {displayValue}
+                  <span className="ml-[3px] text-[#496CBF]">{stat.suffix}</span>
+                </h3>
+
+                <p className="mt-[9px] font-body text-[13px] font-semibold leading-[19px] text-[#182238] sm:text-[14px]">
+                  {stat.label}
+                </p>
+
+                <span className="mt-[3px] font-body text-[11px] leading-[17px] text-[#667A9A] sm:text-[12px]">
+                  {stat.description}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="h-px w-full bg-[#DFE6F1]" />
+
+        <div className="flex flex-col gap-5 pt-[37px] sm:pt-[42px] lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-center gap-[10px]">
+            <span className="h-[8px] w-[8px] shrink-0 rounded-full bg-[#496CBF]" />
+            <span className="font-body text-[12px] text-[#667A9A]">
+              Currently engineering at
+            </span>
+            <span className="font-body text-[12px] font-bold text-[#182238]">
+              Buildupnet
             </span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white tracking-tight relative z-10 mt-4">
-            <span className="block mb-2">Why You Can Trust Me</span>
-            {/* Subtle underline / code style highlight */}
-            <span className="block h-1 w-24 mx-auto rounded-full bg-[#496cbf]/90 mt-2" />
-          </h2>
-
-          <p className="mt-6     text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
-            Proven experience, multiple successful projects, and mastery of
-            modern technologies.
-            <span className="text-[#496cbf] font-semibold">
-              {" "}
-              Clean code, scalable systems, and developer-first approach.
-            </span>
-          </p>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {[
-            { value: "25+", label: "Projects Completed", accent: "#496cbf" },
-            { value: "5+", label: "Certifications Earned", accent: "#496cbf" },
-            { value: "20+", label: "Happy Clients", accent: "#496cbf" },
-            { value: "1.5+", label: "Years of Experience", accent: "#496cbf" },
-          ].map((stat, idx) => (
-            <div
-              key={idx}
-              className="relative rounded-3xl bg-[#1f202e] dark:bg-[#0f111a]
-    p-10 flex flex-col items-center justify-center
-    shadow-[0_12px_30px_rgba(0,0,0,0.15)]
-    hover:shadow-[0_25px_80px_rgba(73,108,191,0.45)]
-    transition-transform duration-500 group overflow-hidden cursor-pointer
-    border border-transparent hover:border-[#496cbf]/30
-    transform hover:-translate-y-1 hover:scale-[1.03]"
-            >
-              {/* Floating Glow Blobs */}
-              <div
-                className={`absolute -top-16 -right-16 w-48 h-48 rounded-full
-      bg-[${stat.accent}]/25 blur-[140px] animate-pulse-slow
-      transform group-hover:scale-110 transition-transform duration-700`}
-              />
-              <div
-                className="absolute -bottom-16 -left-16 w-36 h-36 rounded-full
-      bg-indigo-500/15 blur-[120px] transform group-hover:scale-105
-      transition-transform duration-700"
-              />
-
-              {/* Statistic Value with Gradient + Shadow */}
-              <h3
-                className={`relative z-10 font-bold text-5xl sm:text-6xl tracking-tight
-      bg-clip-text text-transparent
-      bg-gradient-to-r from-[#496cbf] via-indigo-500 to-[#496cbf]
-      drop-shadow-[0_2px_8px_rgba(73,108,191,0.5)]
-      animate-text-gradient`}
-              >
-                {stat.value}
-              </h3>
-
-              {/* Label with subtle underline */}
-              <p className="mt-3 relative z-10 text-gray-300 dark:text-gray-400 font-medium text-center text-lg sm:text-xl">
-                {stat.label}
-                <span className="block mx-auto mt-2 h-[2px] w-10 rounded-full bg-[#496cbf]/50"></span>
-              </p>
-
-              {/* Abstract Floating Particles */}
-              <div className="absolute inset-0 pointer-events-none">
-                {[...Array(6)].map((_, i) => (
-                  <span
-                    key={i}
-                    className="absolute w-2 h-2 rounded-full bg-white/15 animate-float-slow"
-                    style={{
-                      top: `${Math.random() * 85}%`,
-                      left: `${Math.random() * 85}%`,
-                    }}
-                  />
-                ))}
-              </div>
-
-              {/* Optional subtle highlight circle */}
-              <div className="absolute -inset-2 rounded-full border border-[#496cbf]/10 opacity-30 group-hover:opacity-50 transition-opacity duration-500" />
+          <div className="flex flex-wrap items-center gap-6 sm:gap-7">
+            <div className="flex items-center gap-[8px]">
+              <span className="h-[7px] w-[7px] rounded-full bg-[#22C55E]" />
+              <span className="font-body text-[12px] text-[#667A9A]">
+                Open to new opportunities
+              </span>
             </div>
-          ))}
+
+            <Link
+              href="/resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-[8px] font-body text-[12px] font-medium text-[#496CBF] transition-colors hover:text-[#304F9C]"
+            >
+              <FileText size={14} strokeWidth={1.8} />
+              Download Resume
+            </Link>
+          </div>
         </div>
       </div>
     </section>

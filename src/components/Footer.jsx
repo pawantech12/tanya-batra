@@ -1,126 +1,142 @@
 import Link from "next/link";
-import { Code2, Mail, ArrowRight, Github, Linkedin } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { Mail, ArrowRight, Github, Linkedin } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="relative  overflow-hidden border-t border-neutral-200/40 dark:border-neutral-800/40 bg-white/70 dark:bg-black/60 backdrop-blur-xl">
-      {/* Top Gradient Accent */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#496cbf]/50 to-transparent" />
-
-      {/* Ambient Glow */}
-      <div className="pointer-events-none absolute -top-32 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-[#496cbf]/20 blur-[140px]" />
-
-      <div className="relative mx-auto max-w-7xl px-6 py-20">
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-14">
-          {/* ================= Brand ================= */}
-          <div>
+    <footer className="relative overflow-hidden border-t border-[#DFE6F1] bg-white">
+      <div className="mx-auto max-w-[1280px] px-5 pb-[76px] pt-[65px] sm:px-8 sm:pt-[75px] lg:px-0">
+        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 sm:gap-x-10 lg:grid-cols-[1.55fr_0.8fr_1fr] lg:gap-[70px]">
+          <div className="min-w-0">
             <Link
               href="/"
-              className="group relative flex items-center gap-4 select-none"
+              aria-label="Tanya Batra home"
+              className="inline-flex items-center"
             >
               <Image
-                src={"/logo.png"}
-                alt="tanya batra portfolio logo"
-                width={0}
-                height={0}
-                sizes="100vw"
-                className="w-fit h-12"
+                src="/logo.png"
+                alt="Tanya Batra portfolio logo"
+                width={184}
+                height={48}
+                sizes="184px"
+                className="h-10 w-auto object-contain"
                 priority
               />
             </Link>
 
-            <p className="mt-5 max-w-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
+            <p className="mt-[19px] max-w-[390px] font-body text-[14px] leading-[18px] text-[#667A9A] sm:text-[15px] sm:leading-[19px]">
               Crafting scalable web applications with clean architecture,
               performance-first engineering, and production-grade standards.
             </p>
+
+            <div className="mt-[32px] inline-flex max-w-full flex-wrap items-center gap-x-[12px] gap-y-1 rounded-[8px] border border-[#DFE6F1] bg-[#F8FAFC] px-[12px] py-[7px]">
+              <span className="h-[6px] w-[6px] shrink-0 rounded-full bg-[#496CBF]" />
+
+              <span className="font-mono text-[10px] leading-[14px] tracking-[0.1px] text-[#8CA0C0]">
+                Laravel Backend Developer
+              </span>
+
+              <span className="px-[2px] font-mono text-[10px] text-[#8CA0C0]">
+                ·
+              </span>
+
+              <span className="font-mono text-[10px] leading-[14px] tracking-[0.1px] text-[#8CA0C0]">
+                Full Stack Engineer
+              </span>
+            </div>
           </div>
 
-          {/* ================= Navigation ================= */}
-          <div>
-            <h4 className=" font-semibold tracking-wide text-gray-900 dark:text-white mb-5">
+          <div className="min-w-0">
+            <h3 className="font-mono text-[10px] font-semibold uppercase tracking-[0.2px] text-[#182238]">
               Explore
-            </h4>
+            </h3>
 
-            <ul className="space-y-3 text-sm">
-              {[
-                { name: "Home", href: "/" },
-                { name: "About", href: "/about" },
-                { name: "Projects", href: "/projects" },
-                { name: "Services", href: "/services" },
-                { name: "Contact", href: "/contact" },
-              ].map((item) => (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    className="group inline-flex items-center gap-2 text-neutral-600 dark:text-neutral-400 transition hover:text-[#496cbf]"
-                  >
-                    <span className="h-1 w-1 rounded-full bg-[#496cbf]/60 opacity-0 group-hover:opacity-100 transition" />
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div className="mt-[12px] h-[2px] w-[24px] bg-[#496CBF]" />
+
+            <nav aria-label="Footer navigation" className="mt-[21px]">
+              <ul className="space-y-[10px]">
+                {[
+                  { name: "Home", href: "/" },
+                  { name: "About", href: "/about" },
+                  { name: "Projects", href: "/projects" },
+                  { name: "Services", href: "/services" },
+                  { name: "Contact", href: "/contact" },
+                ].map((item) => (
+                  <li key={item.name}>
+                    <Link
+                      href={item.href}
+                      className="inline-flex font-body text-[14px] leading-[20px] text-[#667A9A] transition-colors duration-200 hover:text-[#496CBF]"
+                    >
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
 
-          {/* ================= Contact CTA ================= */}
-          <div>
-            <h4 className=" font-semibold tracking-wide text-gray-900 dark:text-white mb-5">
-              Let’s Work Together
-            </h4>
+          <div className="min-w-0">
+            <h3 className="font-mono text-[10px] font-semibold uppercase tracking-[0.2px] text-[#182238]">
+              Let's Connect
+            </h3>
 
-            <p className=" text-neutral-600 dark:text-neutral-400 mb-6 leading-relaxed">
+            <div className="mt-[12px] h-[2px] w-[24px] bg-[#496CBF]" />
+
+            <p className="mt-[21px] max-w-[390px] font-body text-[14px] leading-[18px] text-[#667A9A] sm:text-[15px] sm:leading-[19px]">
               Open for freelance collaborations and full-time engineering
               opportunities.
             </p>
 
-            <div className="flex flex-col gap-4">
-              <Link href="/contact">
-                <Button className="group relative isolate overflow-hidden rounded-xl px-6 py-2.5 bg-gradient-to-r from-[#496cbf] to-indigo-600 text-white shadow-[0_15px_40px_rgba(73,108,191,0.45)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_25px_60px_rgba(73,108,191,0.6)]">
-                  <span className="absolute -left-full top-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:left-full transition-all duration-700" />
+            <Link
+              href="mailto:batraofficial.02@gmail.com"
+              className="mt-[27px] inline-flex max-w-full items-center gap-[11px] font-body text-[13px] font-medium text-[#182238] transition-colors duration-200 hover:text-[#496CBF] sm:text-[14px]"
+            >
+              <Mail
+                size={16}
+                strokeWidth={1.7}
+                className="shrink-0 text-[#667A9A]"
+              />
+              <span className="break-all">batraofficial.02@gmail.com</span>
+            </Link>
 
-                  <span className="relative flex items-center gap-2">
-                    Contact Me
-                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                </Button>
-              </Link>
-
+            <div className="mt-[19px]">
               <Link
-                href="mailto:batraofficial.02@gmail.com"
-                className="inline-flex items-center gap-2 text-sm font-medium text-[#496cbf] hover:underline underline-offset-4"
+                href="/contact"
+                className="inline-flex min-h-[44px] items-center justify-center gap-[10px] rounded-[9px] border border-[#DFE6F1] bg-white px-[19px] font-body text-[13px] font-semibold text-[#496CBF] transition-all duration-200 hover:border-[#496CBF] hover:bg-[#F8FAFC]"
               >
-                <Mail className="h-4 w-4" />
-                batraofficial.02@gmail.com
+                Get in Touch
+                <ArrowRight size={14} strokeWidth={1.8} />
               </Link>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Divider */}
-        <div className="my-12 h-px bg-neutral-200/40 dark:bg-neutral-800/40" />
+      <div className="border-t border-[#DFE6F1]">
+        <div className="mx-auto flex max-w-[1280px] flex-col items-center justify-between gap-5 px-5 py-[19px] sm:flex-row sm:px-8 lg:px-0">
+          <p className="font-mono text-[10px] leading-[16px] tracking-[0.1px] text-[#8CA0C0] sm:text-[11px]">
+            © {new Date().getFullYear()} Tanya Batra. All rights reserved.
+          </p>
 
-        {/* Bottom Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 text-sm text-neutral-500">
-          <p>© {new Date().getFullYear()} Tanya Batra. All rights reserved.</p>
-
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-[10px]">
             <Link
               href="https://github.com/tanya-batra"
               target="_blank"
-              className="group transition hover:text-[#496cbf]"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              className="flex h-[36px] w-[36px] items-center justify-center rounded-[9px] border border-[#DFE6F1] bg-[#F8FAFC] text-[#667A9A] transition-all duration-200 hover:border-[#496CBF] hover:bg-[#EEF2FF] hover:text-[#496CBF]"
             >
-              <Github className="h-5 w-5 group-hover:scale-110 transition-transform" />
+              <Github size={16} strokeWidth={1.7} />
             </Link>
 
             <Link
               href="https://www.linkedin.com/in/tanyabatra7814"
               target="_blank"
-              className="group transition hover:text-[#496cbf]"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="flex h-[36px] w-[36px] items-center justify-center rounded-[9px] border border-[#DFE6F1] bg-[#F8FAFC] text-[#667A9A] transition-all duration-200 hover:border-[#496CBF] hover:bg-[#EEF2FF] hover:text-[#496CBF]"
             >
-              <Linkedin className="h-5 w-5 group-hover:scale-110 transition-transform" />
+              <Linkedin size={16} strokeWidth={1.7} />
             </Link>
           </div>
         </div>

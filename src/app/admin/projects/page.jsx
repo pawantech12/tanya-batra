@@ -4,49 +4,43 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
-import {
   Plus,
   Pencil,
   Trash2,
   ExternalLink,
   Github,
-  ImageIcon,
+  Image as ImageIcon,
+  Folder,
+  X,
+  Upload,
+  AlertTriangle,
+  LayoutGrid,
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "sonner";
-import Loader from "@/components/loader";
+import { Loader2 } from "lucide-react";
 
-/* -------------------------------------------- */
+const inputClass =
+  "w-full rounded-[8px] border border-[#E1E8F3] bg-white px-[11px] py-[10px] font-['Inter'] text-[13px] font-normal text-[#182238] outline-none transition-all placeholder:text-[#A7B2C2] hover:border-[#C9D5E8] focus:border-[#496CBF] focus:ring-2 focus:ring-[#496CBF]/10";
+
+const labelClass =
+  "mb-[7px] block font-['Inter'] text-[12px] font-semibold text-[#344054]";
 
 export default function ProjectsAdmin() {
   const [projects, setProjects] = useState([]);
   const [previewImage, setPreviewImage] = useState(null);
   const [editingProject, setEditingProject] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteProject, setDeleteProject] = useState(null);
 
   useEffect(() => {
     const loadProjects = async () => {
       setLoading(true);
+
       try {
         const res = await axios.get("/api/projects");
         setProjects(res.data);
@@ -62,202 +56,369 @@ export default function ProjectsAdmin() {
 
   const handleImagePreview = (file) => {
     if (!file) return;
+
     const url = URL.createObjectURL(file);
     setPreviewImage(url);
   };
+
   const handleDelete = async (id) => {
-    await axios.delete(`/api/projects/${id}`);
-    setProjects((prev) => prev.filter((p) => p._id !== id));
-    toast.success("Project Deleted");
+    setDeleteLoading(true);
+    try {
+      await axios.delete(`/api/projects/${id}`);
+      setProjects((prev) => prev.filter((p) => p._id !== id));
+      setDeleteProject(null);
+      toast.success("Project Deleted");
+    } catch (error) {
+      toast.error("Error while deleting project");
+    } finally {
+      setDeleteLoading(false);
+    }
   };
+
   const handleAddProject = (newProject) => {
     setProjects((prev) => [newProject, ...prev]);
+    setAddOpen(false);
   };
 
   const handleUpdateProject = (updatedProject) => {
     setProjects((prev) =>
-      prev.map((p) => (p._id === updatedProject._id ? updatedProject : p))
+      prev.map((p) => (p._id === updatedProject._id ? updatedProject : p)),
     );
+    setEditOpen(false);
+    setEditingProject(null);
+    setPreviewImage(null);
   };
 
-  if (loading) return <Loader text="Loading Projects..." />;
+  const openAddModal = () => {
+    setPreviewImage(null);
+    setAddOpen(true);
+  };
+
+  const openEditModal = (project) => {
+    setEditingProject(project);
+    setPreviewImage(project.image || null);
+    setEditOpen(true);
+  };
+
+  if (loading) {
+    return <ProjectsSkeleton />;
+  }
 
   return (
-    <Card className="p-6 border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h2 className="text-2xl font-semibold tracking-tight">Projects</h2>
+    <main className="min-h-full w-full bg-[#F8FAFC] px-4 pb-8 pt-7 sm:px-6 sm:pt-8 lg:px-8">
+      <section className="rounded-[14px] border border-[#E1E8F3] bg-white p-4 shadow-[0_2px_9px_rgba(24,34,56,0.035)] sm:p-5 lg:p-6">
+        <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+          <div>
+            <div className="mb-2 flex items-center gap-2">
+              <span className="h-[2px] w-5 rounded-full bg-[#496CBF]" />
+              <span className="font-['JetBrains_Mono'] text-[10px] font-medium uppercase tracking-[0.04em] text-[#496CBF]">
+                Management
+              </span>
+            </div>
 
-        {/* ADD PROJECT */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              className="bg-gradient-to-r from-blue-600 to-purple-600"
-              onClick={() => setPreviewImage(null)}
-            >
-              <Plus className="h-4 w-4" />
-              Add Project
-            </Button>
-          </DialogTrigger>
+            <h2 className="font-['Plus_Jakarta_Sans'] text-[22px] font-bold leading-[1.3] tracking-[-0.04em] text-[#182238] sm:text-[23px]">
+              Projects
+            </h2>
+          </div>
 
-          <DialogContent className="max-w-3xl">
-            <DialogHeader>
-              <DialogTitle>Add New Project</DialogTitle>
-            </DialogHeader>
+          <button
+            type="button"
+            onClick={openAddModal}
+            className="inline-flex h-[39px] items-center justify-center gap-2 self-start rounded-[8px] bg-[#496CBF] px-4 font-['Inter'] text-[12px] font-medium text-white shadow-[0_2px_5px_rgba(73,108,191,0.2)] transition-colors hover:bg-[#3F60AE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#496CBF]/30 sm:self-auto"
+          >
+            <Plus size={15} strokeWidth={2} />
+            Add Project
+          </button>
+        </div>
 
-            <ProjectForm
-              previewImage={previewImage}
-              setPreviewImage={setPreviewImage}
-              onFileSelect={handleImagePreview}
-              onAdd={handleAddProject}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      {/* TABLE */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {projects.length > 0 ? (
-          projects.map((project) => (
-            <Card
-              key={project._id}
-              className="group relative flex flex-col rounded-2xl border bg-white dark:bg-slate-900
-                       hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
-            >
-              {/* IMAGE */}
-              <div className="relative overflow-hidden scroll-on-hover rounded-t-lg h-44">
-                <div className="scroll-on-hover-inner">
-                  {" "}
-                  <Image
-                    src={project.image || "/placeholder.svg"}
-                    alt={project.title}
-                    width={400}
-                    height={0} // optional, Next.js will infer it
-                    className="w-full object-cover"
-                  />{" "}
-                </div>
-                {/* Top gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent rounded-t-3xl pointer-events-none" />
-              </div>
-
-              <CardContent className="flex flex-col flex-1 p-5 gap-4">
-                {/* TITLE */}
-                <div>
-                  <h3 className="text-lg font-semibold leading-snug line-clamp-2 text-gray-900 dark:text-white">
-                    {project.title}
-                  </h3>
-
-                  <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 line-clamp-3">
-                    {project.description}
-                  </p>
-                </div>
-
-                {/* LINKS */}
-                <div className="flex items-center gap-4 text-sm">
-                  {project.github && (
-                    <Link
-                      href={project.github}
-                      target="_blank"
-                      className="inline-flex items-center gap-1 font-medium text-blue-600 hover:text-blue-500 transition-colors"
-                    >
-                      <Github className="h-4 w-4" />
-                      Source
-                    </Link>
-                  )}
-
-                  {project.demo && (
-                    <Link
-                      href={project.demo}
-                      target="_blank"
-                      className="inline-flex items-center gap-1 font-medium text-purple-600 hover:text-purple-500 transition-colors"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                      Live
-                    </Link>
-                  )}
-                </div>
-
-                {/* ACTIONS */}
-                <div className="mt-auto pt-4 border-t flex justify-end gap-2">
-                  {/* EDIT */}
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        onClick={() => {
-                          setEditingProject(project);
-                          setPreviewImage(project.image);
-                        }}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-
-                    <DialogContent className="max-w-3xl">
-                      <DialogHeader>
-                        <DialogTitle>Edit Project</DialogTitle>
-                      </DialogHeader>
-
-                      <ProjectForm
-                        project={editingProject}
-                        previewImage={previewImage}
-                        setPreviewImage={setPreviewImage}
-                        onFileSelect={handleImagePreview}
-                        onUpdate={handleUpdateProject}
-                      />
-                    </DialogContent>
-                  </Dialog>
-
-                  {/* DELETE */}
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button size="icon" variant="destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Delete this project?
-                        </AlertDialogTitle>
-                      </AlertDialogHeader>
-
-                      <p className="text-sm text-slate-500">
-                        This action cannot be undone.
-                      </p>
-
-                      <div className="flex justify-end gap-2 mt-4">
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          className="bg-red-600"
-                          onClick={() => handleDelete(project._id)}
-                        >
-                          Delete
-                        </AlertDialogAction>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 sm:gap-5">
+            {projects.map((project) => (
+              <article
+                key={project._id}
+                className="group flex min-w-0 flex-col overflow-hidden rounded-[11px] border border-[#E1E8F3] bg-white transition-all duration-200 hover:-translate-y-[2px] hover:border-[#D1DCF5] hover:shadow-[0_6px_18px_rgba(24,34,56,0.06)]"
+              >
+                <div className="relative h-[145px] overflow-hidden bg-[#EEF2FF] sm:h-[155px]">
+                  {project.image ? (
+                    <div className="scroll-on-hover h-full w-full">
+                      <div className="scroll-on-hover-inner h-full w-full">
+                        <Image
+                          src={project.image}
+                          alt={project.title || "Project image"}
+                          width={600}
+                          height={400}
+                          className="h-full w-full object-cover"
+                        />
                       </div>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                    </div>
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#DCE4FF] to-[#D7E2F2]">
+                      <div className="flex flex-col items-center gap-2 text-[#496CBF]">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-[9px] bg-white/80">
+                          <LayoutGrid size={19} strokeWidth={1.6} />
+                        </span>
+                        <span className="font-['JetBrains_Mono'] text-[10px] text-[#6078B5]">
+                          project.image
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </CardContent>
 
-              {/* BOTTOM ACCENT */}
-              <div className="h-1 w-full bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </Card>
-          ))
+                <div className="flex flex-1 flex-col p-4">
+                  <div>
+                    <h3 className="line-clamp-1 font-['Plus_Jakarta_Sans'] text-[14px] font-semibold leading-[1.4] tracking-[-0.02em] text-[#182238]">
+                      {project.title}
+                    </h3>
+
+                    <p className="mt-[6px] line-clamp-3 min-h-[48px] font-['Inter'] text-[12px] font-normal leading-[1.55] text-[#7C8798]">
+                      {project.description}
+                    </p>
+                  </div>
+
+                  <div className="mt-3 flex min-h-[20px] items-center gap-4">
+                    {project.github && (
+                      <Link
+                        href={project.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 font-['Inter'] text-[11px] font-medium text-[#496CBF] transition-colors hover:text-[#304F9A]"
+                      >
+                        <Github size={12} strokeWidth={1.8} />
+                        Source
+                      </Link>
+                    )}
+
+                    {project.demo && (
+                      <Link
+                        href={project.demo}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 font-['Inter'] text-[11px] font-medium text-[#66758B] transition-colors hover:text-[#496CBF]"
+                      >
+                        <ExternalLink size={12} strokeWidth={1.8} />
+                        Live
+                      </Link>
+                    )}
+                  </div>
+
+                  <div className="mt-3 flex items-center justify-end gap-2 border-t border-[#E8EDF5] pt-3">
+                    <button
+                      type="button"
+                      onClick={() => openEditModal(project)}
+                      aria-label={`Edit ${project.title}`}
+                      className="flex h-[30px] w-[30px] items-center justify-center rounded-[7px] border border-[#DCE5FA] bg-[#F1F4FF] text-[#496CBF] transition-colors hover:border-[#496CBF] hover:bg-[#496CBF] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#496CBF]/20"
+                    >
+                      <Pencil size={13} strokeWidth={1.8} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setDeleteProject(project)}
+                      aria-label={`Delete ${project.title}`}
+                      className="flex h-[30px] w-[30px] items-center justify-center rounded-[7px] border border-[#F3D8DE] bg-[#FFF5F6] text-[#D94B62] transition-colors hover:border-[#D94B62] hover:bg-[#D94B62] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D94B62]/20"
+                    >
+                      <Trash2 size={13} strokeWidth={1.8} />
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
         ) : (
-          <div className="col-span-full text-center py-10 text-slate-500">
-            No Projects Posted yet
+          <div className="flex min-h-[300px] flex-col items-center justify-center py-12 text-center">
+            <div className="mb-3 flex h-[44px] w-[44px] items-center justify-center rounded-[10px] border border-[#DCE5FA] bg-[#F0F3FF] text-[#496CBF]">
+              <Folder size={20} strokeWidth={1.5} />
+            </div>
+
+            <p className="font-['Inter'] text-[13px] font-medium text-[#667A9A]">
+              No Projects Posted yet
+            </p>
+
+            <p className="mt-1 font-['Inter'] text-[11px] text-[#A0A9B6]">
+              Add your first project to get started
+            </p>
           </div>
         )}
-      </div>
-    </Card>
+      </section>
+
+      {addOpen && (
+        <ProjectModal
+          title="Add New Project"
+          onClose={() => {
+            setAddOpen(false);
+            setPreviewImage(null);
+          }}
+        >
+          <ProjectForm
+            key="add-project"
+            previewImage={previewImage}
+            setPreviewImage={setPreviewImage}
+            onFileSelect={handleImagePreview}
+            onAdd={handleAddProject}
+          />
+        </ProjectModal>
+      )}
+
+      {editOpen && editingProject && (
+        <ProjectModal
+          title="Edit Project"
+          onClose={() => {
+            setEditOpen(false);
+            setEditingProject(null);
+            setPreviewImage(null);
+          }}
+        >
+          <ProjectForm
+            key={editingProject._id}
+            project={editingProject}
+            previewImage={previewImage}
+            setPreviewImage={setPreviewImage}
+            onFileSelect={handleImagePreview}
+            onUpdate={handleUpdateProject}
+          />
+        </ProjectModal>
+      )}
+
+      {deleteProject && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#182238]/35 px-4 py-6 backdrop-blur-[2px]">
+          <div className="w-full max-w-[380px] rounded-[13px] border border-[#E1E8F3] bg-white p-5 shadow-[0_15px_50px_rgba(24,34,56,0.16)] sm:p-6">
+            <div className="flex items-center gap-3">
+              <div className="flex h-[34px] w-[34px] items-center justify-center rounded-[8px] bg-[#FFF1F3] text-[#D94B62]">
+                <AlertTriangle size={16} strokeWidth={1.8} />
+              </div>
+
+              <h3 className="font-['Plus_Jakarta_Sans'] text-[16px] font-bold tracking-[-0.025em] text-[#182238]">
+                Delete this project?
+              </h3>
+            </div>
+
+            <p className="mt-3 font-['Inter'] text-[12px] leading-[1.6] text-[#8994A5]">
+              This action cannot be undone.
+            </p>
+
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setDeleteProject(null)}
+                className="h-[35px] rounded-[7px] border border-[#E1E8F3] bg-white px-4 font-['Inter'] text-[11px] font-medium text-[#66758B] transition-colors hover:bg-[#F8FAFC]"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                disabled={deleteLoading}
+                onClick={() => handleDelete(deleteProject._id)}
+                className="inline-flex h-[35px] items-center gap-1.5 rounded-[7px] border border-[#F3D8DE] bg-[#FFF3F5] px-4 font-['Inter'] text-[11px] font-medium text-[#D94B62] transition-colors hover:bg-[#D94B62] hover:text-white"
+              >
+                {deleteLoading ? (
+                  <Loader2 size={16} />
+                ) : (
+                  <>
+                    <Trash2 size={12} />
+                    Delete{" "}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
   );
 }
 
-/* -------------------------------------------- */
-/* FORM COMPONENT */
+function ProjectsSkeleton() {
+  return (
+    <main className="min-h-full w-full bg-[#F8FAFC] px-4 pb-8 pt-7 sm:px-6 sm:pt-8 lg:px-8">
+      <section className="rounded-[14px] border border-[#E1E8F3] bg-white p-4 shadow-[0_2px_9px_rgba(24,34,56,0.035)] sm:p-5 lg:p-6">
+        <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+          <div>
+            <div className="mb-2 flex items-center gap-2">
+              <span className="h-[2px] w-5 rounded-full bg-[#E1E8F3]" />
+              <div className="h-[10px] w-[85px] animate-pulse rounded bg-[#E8EDF5]" />
+            </div>
+            <div className="h-[28px] w-[130px] animate-pulse rounded-[5px] bg-[#E8EDF5]" />
+          </div>
+
+          <div className="h-[39px] w-[125px] animate-pulse rounded-[8px] bg-[#E8EDF5]" />
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 sm:gap-5">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div
+              key={index}
+              className="overflow-hidden rounded-[11px] border border-[#E1E8F3] bg-white"
+            >
+              <div className="h-[145px] animate-pulse bg-[#E8EDF5] sm:h-[155px]" />
+
+              <div className="space-y-3 p-4">
+                <div className="h-[14px] w-3/4 animate-pulse rounded bg-[#E8EDF5]" />
+                <div className="space-y-2">
+                  <div className="h-[10px] w-full animate-pulse rounded bg-[#EEF1F6]" />
+                  <div className="h-[10px] w-[90%] animate-pulse rounded bg-[#EEF1F6]" />
+                  <div className="h-[10px] w-[65%] animate-pulse rounded bg-[#EEF1F6]" />
+                </div>
+
+                <div className="flex gap-4 pt-1">
+                  <div className="h-[11px] w-[48px] animate-pulse rounded bg-[#EEF1F6]" />
+                  <div className="h-[11px] w-[35px] animate-pulse rounded bg-[#EEF1F6]" />
+                </div>
+
+                <div className="flex justify-end gap-2 border-t border-[#E8EDF5] pt-3">
+                  <div className="h-[30px] w-[30px] animate-pulse rounded-[7px] bg-[#EEF1F6]" />
+                  <div className="h-[30px] w-[30px] animate-pulse rounded-[7px] bg-[#EEF1F6]" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function ProjectModal({ title, onClose, children }) {
+  return (
+    <div
+      className="fixed inset-0 z-[90] flex items-start justify-center overflow-y-auto bg-[#182238]/35 px-3 py-5 backdrop-blur-[2px] sm:items-center sm:px-5 sm:py-8"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <section className="my-auto w-full max-w-[1000px] overflow-hidden rounded-[13px] border border-[#E1E8F3] bg-white shadow-[0_15px_50px_rgba(24,34,56,0.14)]">
+        <div className="flex items-center justify-between border-b border-[#E8EDF5] px-4 py-4 sm:px-5">
+          <div>
+            <div className="mb-[5px] flex items-center gap-2">
+              <span className="h-[2px] w-4 rounded-full bg-[#496CBF]" />
+              <span className="font-['JetBrains_Mono'] text-[10px] font-medium uppercase tracking-[0.04em] text-[#496CBF]">
+                Project Form
+              </span>
+            </div>
+
+            <h2 className="font-['Plus_Jakarta_Sans'] text-[19px] font-bold leading-[1.3] tracking-[-0.04em] text-[#182238]">
+              {title}
+            </h2>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close form"
+            className="flex h-[32px] w-[32px] items-center justify-center rounded-[8px] border border-[#E1E8F3] bg-white text-[#8994A5] transition-colors hover:border-[#C7D5FF] hover:bg-[#EEF2FF] hover:text-[#496CBF]"
+          >
+            <X size={16} strokeWidth={1.8} />
+          </button>
+        </div>
+
+        <div className="max-h-[calc(100vh-115px)] overflow-y-auto p-4 sm:p-5 lg:p-6">
+          {children}
+        </div>
+      </section>
+    </div>
+  );
+}
 
 function ProjectForm({
   project,
@@ -287,10 +448,11 @@ function ProjectForm({
     },
   });
 
+  const imageField = register("image");
+
   const onSubmit = async (data) => {
     const formData = new FormData();
 
-    // append text fields ONLY
     formData.append("title", data.title);
     formData.append("description", data.description);
     formData.append("github", data.github || "");
@@ -300,7 +462,6 @@ function ProjectForm({
     formData.append("projectDate", data.projectDate || "");
     formData.append("keywords", data.keywords || "");
 
-    // ✅ Append image only if new one selected
     if (data.image && data.image.length > 0) {
       formData.append("image", data.image[0]);
     }
@@ -309,7 +470,6 @@ function ProjectForm({
       if (project?._id) {
         const res = await axios.put(`/api/projects/${project._id}`, formData);
         onUpdate?.(res.data);
-
         toast.success("Project Updated");
       } else {
         const res = await axios.post("/api/projects", formData);
@@ -327,165 +487,173 @@ function ProjectForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="grid md:grid-cols-2 gap-8 h-[85vh] overflow-y-auto"
+      className="grid grid-cols-1 gap-6 lg:grid-cols-[1.35fr_0.9fr] lg:gap-8"
     >
-      {/* FORM */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-            Project Title
-          </label>
-          <Input
+          <label className={labelClass}>Project Title</label>
+          <input
             placeholder="Enter project title"
-            defaultValue={project?.title}
+            className={inputClass}
             {...register("title")}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-            Project Description
-          </label>
-          <Textarea
+          <label className={labelClass}>Project Description</label>
+          <textarea
             placeholder="Briefly describe the project"
-            defaultValue={project?.description}
+            className={`${inputClass} min-h-[115px] resize-y leading-[1.6]`}
             {...register("description")}
-            className="min-h-[120px]"
           />
         </div>
 
-        {/* CATEGORY */}
         <div>
-          <label className="block text-sm font-medium mb-1">Category</label>
-          <Input
+          <label className={labelClass}>Category</label>
+          <input
             placeholder="e.g. Web App, SaaS, E-commerce"
+            className={inputClass}
             {...register("category")}
           />
         </div>
 
-        {/* DESIGNED BY */}
         <div>
-          <label className="block text-sm font-medium mb-1">
-            Designed & Developed By
-          </label>
-          <Input
+          <label className={labelClass}>Designed & Developed By</label>
+          <input
             placeholder="Your name or Team name"
+            className={inputClass}
             {...register("designedBy")}
           />
         </div>
 
-        {/* PROJECT DATE */}
         <div>
-          <label className="block text-sm font-medium mb-1">Project Date</label>
-          <Input
+          <label className={labelClass}>Project Date</label>
+          <input
             type="text"
             placeholder="Project Date"
+            className={inputClass}
             {...register("projectDate", { required: true })}
           />
         </div>
 
-        {/* KEYWORDS */}
         <div>
-          <label className="block text-sm font-medium mb-1">Keywords</label>
-          <Input
+          <label className={labelClass}>Keywords</label>
+          <input
             placeholder="react, nextjs, mongodb (comma separated)"
+            className={inputClass}
             {...register("keywords")}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-            GitHub Repository URL
-          </label>
-          <Input
+          <label className={labelClass}>GitHub Repository URL</label>
+          <input
             placeholder="https://github.com/username/project"
-            defaultValue={project?.github}
+            className={inputClass}
             {...register("github")}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-            Live Demo URL
-          </label>
-          <Input
+          <label className={labelClass}>Live Demo URL</label>
+          <input
             placeholder="https://yourproject.com"
-            defaultValue={project?.demo}
+            className={inputClass}
             {...register("demo")}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-            Project Image
-          </label>
+          <label className={labelClass}>Project Image</label>
 
-          <Input
-            type="file"
-            accept="image/*"
-            {...register("image")}
-            onChange={(e) => {
-              register("image").onChange(e);
-              onFileSelect(e.target.files[0]);
-            }}
-            className="cursor-pointer"
-          />
+          <label className="flex min-h-[40px] cursor-pointer items-center gap-2 rounded-[8px] border border-[#E1E8F3] bg-[#FAFBFD] px-3 py-2 font-['Inter'] text-[12px] text-[#8994A5] transition-colors hover:border-[#C7D5FF] hover:bg-[#F5F7FC]">
+            <Upload size={14} strokeWidth={1.7} />
+
+            <span>
+              {project
+                ? "Choose new image to replace..."
+                : "Choose image file..."}
+            </span>
+
+            <input
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              name={imageField.name}
+              ref={imageField.ref}
+              onBlur={imageField.onBlur}
+              onChange={(e) => {
+                imageField.onChange(e);
+                onFileSelect(e.target.files?.[0]);
+              }}
+            />
+          </label>
         </div>
 
-        <Button
-          className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 shadow-md"
+        <button
+          type="submit"
           disabled={isSubmitting}
+          className="flex h-[40px] w-full items-center justify-center rounded-[8px] bg-[#496CBF] px-4 font-['Inter'] text-[12px] font-semibold text-white shadow-[0_2px_5px_rgba(73,108,191,0.18)] transition-colors hover:bg-[#3F60AE] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSubmitting
             ? project
               ? "Updating..."
               : "Adding..."
             : project
-            ? "Update Project"
-            : "Save Project"}
-        </Button>
+              ? "Update Project"
+              : "Save Project"}
+        </button>
       </div>
 
-      {/* IMAGE PREVIEW */}
       <div className="space-y-3">
-        <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
-          Preview
-        </p>
+        <p className={labelClass}>Image Preview</p>
 
-        <div className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 h-64">
+        <div className="relative h-[210px] overflow-hidden rounded-[9px] border border-[#DCE5F5] bg-[#F8FAFC] sm:h-[250px] lg:h-[280px]">
           {previewImage ? (
             <>
-              <div className="scroll-on-hover h-full">
-                <div className="scroll-on-hover-inner">
+              <div className="scroll-on-hover h-full w-full">
+                <div className="scroll-on-hover-inner h-full w-full">
                   <Image
                     src={previewImage}
-                    alt="Preview"
-                    width={400}
-                    height={400}
-                    className="w-full object-cover"
+                    alt="Project preview"
+                    width={800}
+                    height={600}
+                    unoptimized={previewImage.startsWith("blob:")}
+                    className="h-full w-full object-cover"
                   />
                 </div>
               </div>
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/35 to-transparent px-3 pb-3 pt-8">
+                <span className="inline-flex items-center gap-1.5 rounded-[6px] bg-white/90 px-2 py-1 font-['Inter'] text-[10px] font-medium text-[#496CBF]">
+                  <ImageIcon size={11} />
+                  Image selected
+                </span>
+              </div>
             </>
           ) : (
-            <div className="flex h-full flex-col items-center justify-center text-center px-6 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl">
-              <div className="flex items-center justify-center h-14 w-14 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md mb-3">
-                <ImageIcon className="h-7 w-7" />
+            <div className="flex h-full flex-col items-center justify-center gap-3 rounded-[9px] border-2 border-dashed border-[#DCE5F5] bg-gradient-to-br from-[#FAFBFE] to-[#F0F3FF] px-5 text-center">
+              <div className="flex h-[48px] w-[48px] items-center justify-center rounded-[11px] border border-[#DCE5FA] bg-white text-[#496CBF] shadow-[0_2px_8px_rgba(24,34,56,0.04)]">
+                <ImageIcon size={21} strokeWidth={1.6} />
               </div>
 
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                No image selected
-              </p>
-              <p className="text-xs text-slate-500 mt-1">
-                Upload an image to see preview here
-              </p>
+              <div>
+                <p className="font-['Inter'] text-[13px] font-medium text-[#667085]">
+                  No image selected
+                </p>
+
+                <p className="mt-1 font-['Inter'] text-[11px] leading-[1.5] text-[#A0A9B6]">
+                  Upload an image to see preview here
+                </p>
+              </div>
             </div>
           )}
         </div>
 
-        <p className="text-xs text-slate-500">Image preview scrolls on hover</p>
+        <p className="flex items-center gap-1.5 font-['JetBrains_Mono'] text-[10px] text-[#A0A9B6]">
+          <ImageIcon size={11} strokeWidth={1.5} />
+          Image preview scrolls on hover
+        </p>
       </div>
     </form>
   );

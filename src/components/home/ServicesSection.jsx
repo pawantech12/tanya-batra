@@ -1,164 +1,287 @@
 "use client";
+
 import axios from "axios";
-import { Code2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import * as LucideIcons from "lucide-react";
-import Loader from "../loader";
+
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Code2,
+  Zap,
+  Server,
+  Workflow,
+  Database,
+  Layers,
+} from "lucide-react";
+
+const serviceThemes = [
+  {
+    icon: Server,
+    iconColor: "text-[#496CBF]",
+    iconBg: "bg-[#EEF2FF]",
+  },
+  {
+    icon: Workflow,
+    iconColor: "text-[#00A875]",
+    iconBg: "bg-[#EAFBF4]",
+  },
+  {
+    icon: Database,
+    iconColor: "text-[#F97316]",
+    iconBg: "bg-[#FFF5EB]",
+  },
+  {
+    icon: Layers,
+    iconColor: "text-[#8B35FF]",
+    iconBg: "bg-[#F4EEFF]",
+  },
+];
+
+function getServiceTheme(service, index) {
+  const title = (service?.title || "").toLowerCase();
+
+  if (title.includes("backend")) return serviceThemes[0];
+  if (title.includes("api")) return serviceThemes[1];
+  if (title.includes("database")) return serviceThemes[2];
+
+  if (title.includes("full stack") || title.includes("fullstack")) {
+    return serviceThemes[3];
+  }
+
+  return serviceThemes[index % serviceThemes.length];
+}
+
+function getServiceIcon(service, index) {
+  const theme = getServiceTheme(service, index);
+
+  if (service?.icon && LucideIcons[service.icon]) {
+    return LucideIcons[service.icon];
+  }
+
+  return theme.icon || Code2;
+}
+
+function getServiceTags(service) {
+  const tags =
+    service?.technologies ||
+    service?.techStack ||
+    service?.tags ||
+    service?.technology;
+
+  if (Array.isArray(tags)) {
+    return tags.filter(Boolean).slice(0, 3).join(" · ");
+  }
+
+  if (typeof tags === "string" && tags.trim()) {
+    return tags;
+  }
+
+  return "";
+}
+
+function ServiceCard({ service, index }) {
+  const theme = getServiceTheme(service, index);
+  const Icon = getServiceIcon(service, index);
+  const tags = getServiceTags(service);
+
+  return (
+    <article className="group relative flex min-h-[232px] flex-col overflow-hidden rounded-[12px] border border-[#E1E8F3] bg-white p-[24px] transition-all duration-300 hover:-translate-y-[3px] hover:border-[#C7D2FE] hover:shadow-[0_12px_30px_rgba(24,34,56,0.06)]">
+      <div className="flex items-center justify-between">
+        <div
+          className={`flex h-[36px] w-[36px] items-center justify-center rounded-[11px] ${theme.iconBg}`}
+        >
+          <Icon
+            size={19}
+            strokeWidth={1.8}
+            className={theme.iconColor}
+            aria-hidden="true"
+          />
+        </div>
+
+        <ArrowUpRight
+          size={17}
+          strokeWidth={1.7}
+          className="text-[#C5CFDC] transition-all duration-300 group-hover:-translate-y-[2px] group-hover:translate-x-[2px] group-hover:text-[#496CBF]"
+          aria-hidden="true"
+        />
+      </div>
+
+      <div className="mt-[15px]">
+        <h3 className="font-heading text-[15px] font-semibold leading-[22px] tracking-[-0.3px] text-[#182238]">
+          {service?.title || "Development Service"}
+        </h3>
+
+        <p className="mt-[6px] font-body text-[13px] font-normal leading-[20px] text-[#667A9A] sm:text-[14px] sm:leading-[22px]">
+          {service?.description || "Professional development solutions."}
+        </p>
+      </div>
+
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-3 pt-[17px]">
+        {tags ? (
+          <span className="inline-flex max-w-[70%] items-center truncate rounded-[5px] bg-[#F1F5F9] px-[10px] py-[4px] font-mono text-[10px] leading-[13px] text-[#667A9A]">
+            {tags}
+          </span>
+        ) : (
+          <span />
+        )}
+
+        <Link
+          href="/services"
+          className="inline-flex shrink-0 items-center gap-[5px] font-body text-[12px] font-medium text-[#496CBF] transition-colors duration-200 hover:text-[#304F9B]"
+        >
+          Learn more
+          <ArrowRight size={13} strokeWidth={1.8} />
+        </Link>
+      </div>
+    </article>
+  );
+}
+
+function ServiceSkeleton() {
+  return (
+    <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
+      {[1, 2, 3, 4].map((item) => (
+        <div
+          key={item}
+          className="min-h-[232px] animate-pulse rounded-[12px] border border-[#E1E8F3] bg-[#F8FAFC] p-[24px]"
+        >
+          <div className="h-[36px] w-[36px] rounded-[11px] bg-[#EEF2FF]" />
+
+          <div className="mt-[19px] h-[12px] w-[65%] rounded-[4px] bg-[#E2E8F0]" />
+
+          <div className="mt-[11px] space-y-[7px]">
+            <div className="h-[8px] w-full rounded bg-[#F1F5F9]" />
+            <div className="h-[8px] w-full rounded bg-[#F1F5F9]" />
+            <div className="h-[8px] w-[72%] rounded bg-[#F1F5F9]" />
+          </div>
+
+          <div className="mt-[19px] h-[17px] w-[62px] rounded-[5px] bg-[#E2E8F0]" />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function ServicesSection() {
   const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+
       try {
         const res = await axios.get("/api/services");
-        setServices(res.data);
+
+        setServices(
+          Array.isArray(res.data)
+            ? res.data.filter(
+                (service) =>
+                  service &&
+                  typeof service === "object" &&
+                  typeof service.title === "string",
+              )
+            : [],
+        );
       } catch (error) {
-        console.log("Error while fetching services", error);
+        console.error("Error while fetching services:", error);
+        setServices([]);
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
   }, []);
 
   return (
     <section
       id="services"
-      className="py-24 max-sm:py-16 bg-gray-50 dark:bg-gray-900 relative overflow-hidden"
+      aria-label="Services and capabilities"
+      className="relative overflow-hidden bg-white py-[85px] sm:py-[90px] lg:py-[100px]"
     >
-      {/* Section Header */}
-      <div className="text-center max-w-2xl px-4 mx-auto mb-16 relative">
-        {/* Badge / Tag */}
-        <div
-          className="mx-auto w-fit flex items-center gap-2 px-4 py-1.5 rounded-full
-          bg-[#496cbf]/10
-          backdrop-blur-md ring-1 ring-[#496cbf]/30
-          hover:scale-105 transition-transform duration-300 group"
-        >
-          <Code2 className="h-4 w-4 text-[#496cbf] group-hover:text-indigo-500 transition-colors duration-300" />
-          <span className="text-xs font-semibold text-[#496cbf] group-hover:text-indigo-500 tracking-tight">
-            Services
-          </span>
+      <div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-0">
+        <div className="grid grid-cols-1 items-start gap-7 md:grid-cols-[1.55fr_1fr] md:gap-[55px]">
+          <div>
+            <div className="flex items-center gap-[10px]">
+              <span className="h-[2px] w-[28px] bg-[#496CBF]" />
+
+              <span className="font-mono text-[10px] font-medium uppercase tracking-[0.25px] text-[#496CBF]">
+                Services &amp; Capabilities
+              </span>
+            </div>
+
+            <h2 className="mt-[25px] max-w-[570px] font-heading text-[34px] font-bold leading-[1.18] tracking-[-1.3px] text-[#182238] sm:text-[40px] lg:text-[44px]">
+              Engineering solutions
+              <br className="hidden sm:block" /> that move businesses
+              <br className="hidden sm:block" /> forward.
+            </h2>
+          </div>
+
+          <div className="pt-0 md:pt-[2px] lg:pt-[1px]">
+            <p className="max-w-[455px] font-body text-[15px] font-normal leading-[27px] text-[#667A9A] sm:text-[16px]">
+              I provide developer-focused services with modern tech stacks,
+              scalable architecture, and professional implementations. Clean,
+              efficient, and production-ready solutions.
+            </p>
+
+            <div className="mt-[17px] inline-flex min-h-[31px] items-center gap-[8px] rounded-[7px] border border-[#C7D2FE] bg-[#EEF2FF] px-[11px] py-[6px]">
+              <Zap
+                size={13}
+                strokeWidth={1.8}
+                className="shrink-0 text-[#496CBF]"
+              />
+
+              <span className="font-mono text-[10px] tracking-[0.1px] text-[#385EB8] sm:text-[11px]">
+                Services from /api/services
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* Section Title */}
-        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white tracking-tight relative z-10 mt-4">
-          <span className="block mb-2">What I Do</span>
-          <span className="block h-1 w-24 mx-auto rounded-full bg-[#496cbf]/90 mt-2" />
-        </h2>
-
-        {/* Section Description */}
-        <p className="mt-6 text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
-          I provide developer-focused services with modern tech stacks, scalable
-          architecture, and professional implementations.
-          <span className="text-[#496cbf] font-semibold">
-            {" "}
-            Clean, efficient, and production-ready solutions.
-          </span>
-        </p>
-      </div>
-
-      {/* Services Grid */}
-      {loading ? (
-        <Loader text="Loading Services..." />
-      ) : (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {services.slice(0, 4).map((service, index) => {
-            const Icon = LucideIcons[service.icon] || LucideIcons.HelpCircle;
-            return (
-              <article
-                key={index}
-                className="group relative flex flex-col
-          rounded-xl bg-white
-          border border-slate-200
-          p-7
-          shadow-[0_8px_30px_rgba(15,23,42,0.06)]
-          hover:shadow-[0_20px_60px_rgba(73,108,191,0.18)]
-          transition-all duration-500 ease-out
-          hover:-translate-y-2 overflow-hidden"
-              >
-                {/* Subtle Tech Grid Background */}
-                <div
-                  className="absolute inset-0 opacity-[0.04] pointer-events-none"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(to right, #496cbf 1px, transparent 1px), linear-gradient(to bottom, #496cbf 1px, transparent 1px)",
-                    backgroundSize: "28px 28px",
-                  }}
+        <div className="mt-[48px] sm:mt-[50px]">
+          {loading ? (
+            <ServiceSkeleton />
+          ) : services.length > 0 ? (
+            <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
+              {services.slice(0, 4).map((service, index) => (
+                <ServiceCard
+                  key={service._id || service.id || service.title || index}
+                  service={service}
+                  index={index}
                 />
+              ))}
+            </div>
+          ) : (
+            <div className="flex min-h-[220px] flex-col items-center justify-center rounded-[12px] border border-[#E1E8F3] bg-[#F8FAFC] px-6 py-12 text-center">
+              <Code2 size={25} className="text-[#496CBF]" />
 
-                {/* Top Accent Line */}
-                <div className="absolute top-0 left-0 h-[3px] w-full bg-gradient-to-r from-[#496cbf] via-indigo-400 to-transparent" />
+              <h3 className="mt-3 font-heading text-[15px] font-semibold text-[#182238]">
+                No services available yet
+              </h3>
 
-                {/* Icon Wrapper */}
-                <div
-                  className="relative z-10 mb-6 flex items-center justify-center
-            h-14 w-14 rounded-2xl
-            bg-gradient-to-br from-[#eef2ff] to-[#e0e7ff]
-            ring-1 ring-indigo-200/60
-            group-hover:from-[#496cbf]/20 group-hover:to-indigo-400/20
-            transition-all duration-500"
-                >
-                  <Icon className="h-7 w-7" aria-hidden />
-                </div>
-
-                {/* Content */}
-                <div className="relative z-10">
-                  <h3 className="text-lg font-semibold text-slate-900 tracking-tight mb-2">
-                    {service.title}
-                  </h3>
-
-                  <p className="text-sm text-slate-600 leading-relaxed">
-                    {service.description}
-                  </p>
-                </div>
-
-                {/* Hover Glow */}
-                <div
-                  className="absolute -bottom-24 -right-24 h-48 w-48 rounded-full
-            bg-gradient-to-tr from-[#496cbf]/20 to-indigo-400/20
-            blur-3xl opacity-0 group-hover:opacity-100
-            transition-opacity duration-700"
-                />
-              </article>
-            );
-          })}
+              <p className="mt-1 font-body text-[13px] leading-[20px] text-[#667A9A]">
+                Services will appear here once they have been added.
+              </p>
+            </div>
+          )}
         </div>
-      )}
-      <div className="mt-12 text-center">
-        <Link href="/services">
-          <button
-            className="relative inline-flex items-center gap-3 rounded-xl
-      bg-gradient-to-r from-[#496cbf] to-indigo-500
-      px-10 py-4 text-white font-semibold tracking-tight
-      shadow-[0_10px_30px_rgba(73,108,191,0.35)]
-      hover:shadow-[0_14px_45px_rgba(73,108,191,0.5)]
-      transition-all duration-300 overflow-hidden group"
+
+        <div className="mt-[58px] flex justify-center sm:mt-[64px]">
+          <Link
+            href="/services"
+            className="group inline-flex min-h-[48px] items-center justify-center gap-[12px] rounded-[8px] border border-[#E1E8F3] bg-white px-[28px] py-[11px] font-body text-[14px] font-medium text-[#182238] transition-all duration-300 hover:border-[#C7D2FE] hover:bg-[#F8FAFF]"
           >
-            {/* Layered Glow */}
-            <span
-              className="absolute inset-0 bg-gradient-to-r from-white/20 via-white/5 to-white/20
-        opacity-0 group-hover:opacity-50 transition-opacity duration-500"
+            Explore All Services
+            <ArrowRight
+              size={14}
+              strokeWidth={1.8}
+              className="text-[#496CBF] transition-transform duration-300 group-hover:translate-x-[3px]"
             />
-
-            {/* Holographic Circles */}
-            <span className="absolute -top-8 -left-12 h-20 w-20 rounded-full bg-white/10 blur-3xl animate-pulse-slow" />
-            <span className="absolute -bottom-8 -right-12 h-20 w-20 rounded-full bg-indigo-200/15 blur-3xl animate-pulse-slow" />
-
-            {/* Diagonal Animated Shine */}
-            <span className="absolute -top-1/2 -left-1/2 w-24 h-48 bg-white/10 rotate-45 blur-xl animate-slide-shine pointer-events-none" />
-
-            {/* Button Text */}
-            <span className="relative flex items-center gap-2 tracking-wide">
-              See All Services
-              <LucideIcons.ExternalLink className="h-5 w-5 text-white transition-transform duration-300 group-hover:translate-x-1" />
-            </span>
-          </button>
-        </Link>
+          </Link>
+        </div>
       </div>
     </section>
   );

@@ -3,18 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
   Folder,
   Star,
   Layers,
   Wrench,
   Briefcase,
-  Award,
   GraduationCap,
   X,
   Layout,
 } from "lucide-react";
-import { Button } from "../ui/button";
 
 const menu = [
   { name: "Dashboard", href: "/admin", icon: Layout },
@@ -38,31 +35,38 @@ export function Sidebar({ onMenuClick }) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-72 min-h-screen backdrop-blur-xl bg-white/80 dark:bg-neutral-900/80 border-r border-[#496cbf]/20 flex flex-col shadow-[0_0_40px_rgba(73,108,191,0.08)]">
-      {/* Brand */}
-      <div className="px-6 py-6 border-b border-[#496cbf]/20 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-r from-[#496cbf] to-indigo-500 flex items-center justify-center text-white font-bold shadow-md">
+    <aside
+      id="admin-sidebar"
+      className="flex h-full min-h-0 w-full flex-col border-r border-[#E1E8F3] bg-white"
+    >
+      <div className="flex min-h-[84px] shrink-0 items-center justify-between border-b border-[#E1E8F3] px-5 sm:px-6">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[10px] bg-[#496CBF] font-['Inter'] text-[13px] font-bold text-white">
             TB
           </div>
-          <div>
-            <h2 className="text-sm font-semibold leading-tight">Admin Panel</h2>
-            <p className="text-xs text-muted-foreground">Portfolio Manager</p>
+
+          <div className="min-w-0">
+            <h2 className="font-['Plus_Jakarta_Sans'] text-[14px] font-bold leading-[1.35] tracking-[-0.025em] text-[#182238]">
+              Admin Panel
+            </h2>
+
+            <p className="mt-[3px] font-['Inter'] text-[11px] font-normal text-[#8994A5]">
+              Portfolio Manager
+            </p>
           </div>
         </div>
 
-        <Button
-          variant="outline"
-          size="icon"
+        <button
+          type="button"
           onClick={onMenuClick}
-          className="lg:hidden border-[#496cbf]/30"
+          aria-label="Close sidebar"
+          className="ml-2 flex h-[32px] w-[32px] shrink-0 items-center justify-center rounded-[8px] border border-[#E1E8F3] bg-white text-[#718096] transition-colors duration-200 hover:border-[#C7D5FF] hover:bg-[#EEF2FF] hover:text-[#496CBF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#496CBF]/20 lg:hidden"
         >
-          <X className="h-5 w-5 text-[#496cbf]" />
-        </Button>
+          <X size={16} strokeWidth={1.8} />
+        </button>
       </div>
 
-      {/* Menu */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 space-y-[7px] overflow-y-auto px-4 py-4">
         {menu.map((item) => {
           const active = pathname === item.href;
 
@@ -71,37 +75,36 @@ export function Sidebar({ onMenuClick }) {
               key={item.name}
               href={item.href}
               onClick={onMenuClick}
-              className={`relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group
-              ${
+              className={`group relative flex min-h-[51px] items-center gap-[11px] rounded-[9px] border px-[10px] py-[8px] font-['Inter'] text-[13px] font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#496CBF]/20 ${
                 active
-                  ? "bg-[#496cbf]/10 text-[#496cbf]"
-                  : "hover:bg-[#496cbf]/5"
+                  ? "border-[#D5DDF6] bg-[#EEF2FF] text-[#496CBF]"
+                  : "border-transparent bg-white text-[#66758B] hover:bg-[#F7F9FC] hover:text-[#496CBF]"
               }`}
             >
               {active && (
-                <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[#496cbf]" />
+                <span className="absolute bottom-[10px] left-0 top-[10px] w-[3px] rounded-r-full bg-[#496CBF]" />
               )}
 
-              <div
-                className={`h-9 w-9 flex items-center justify-center rounded-lg transition-all
-                ${
+              <span
+                className={`flex h-[28px] w-[28px] shrink-0 items-center justify-center rounded-[7px] transition-colors duration-200 ${
                   active
-                    ? "bg-gradient-to-r from-[#496cbf] to-indigo-500 text-white shadow-md"
-                    : "bg-[#496cbf]/10 text-[#496cbf] group-hover:bg-[#496cbf]/20"
+                    ? "bg-[#E3EAFE] text-[#496CBF]"
+                    : "bg-transparent text-[#9AA8B9] group-hover:text-[#496CBF]"
                 }`}
               >
-                <item.icon className="h-4 w-4" />
-              </div>
+                <item.icon size={16} strokeWidth={1.8} />
+              </span>
 
-              {item.name}
+              <span>{item.name}</span>
             </Link>
           );
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="px-6 py-4 border-t border-[#496cbf]/20 text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Tanya Batra
+      <div className="flex min-h-[52px] shrink-0 items-center border-t border-[#E1E8F3] px-5 sm:px-6">
+        <p className="font-['JetBrains_Mono'] text-[10px] font-normal text-[#A0A9B6]">
+          © {new Date().getFullYear()} Tanya Batra
+        </p>
       </div>
     </aside>
   );

@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { ExternalLink, LogOut, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -20,44 +19,53 @@ export function AdminHeader({ onMenuClick }) {
   };
 
   return (
-    <header className="sticky top-0 z-30 backdrop-blur-xl bg-white/70 dark:bg-neutral-900/70 border-b border-[#496cbf]/20">
-      {/* Accent Gradient Line */}
-      <div className="h-[2px] w-full bg-gradient-to-r from-[#496cbf] via-indigo-500 to-purple-600" />
-
-      <div className="flex items-center justify-between px-6 py-4">
-        {/* Left */}
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="icon"
+    <header className="sticky top-0 z-30 w-full shrink-0 border-b border-[#E1E8F3] bg-white">
+      <div className="flex min-h-[68px] w-full items-center justify-between gap-3 px-4 sm:px-6 lg:px-5">
+        <div className="flex min-w-0 items-center gap-3">
+          <button
+            type="button"
             onClick={onMenuClick}
-            className="lg:hidden border-[#496cbf]/30 hover:bg-[#496cbf]/10"
+            aria-label="Open sidebar"
+            aria-controls="admin-sidebar"
+            className="flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-[9px] border border-[#E1E8F3] bg-[#F8FAFC] text-[#496CBF] transition-colors duration-200 hover:border-[#C7D5FF] hover:bg-[#EEF2FF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#496CBF]/20 lg:hidden"
           >
-            <Menu className="h-5 w-5 text-[#496cbf]" />
-          </Button>
+            <Menu size={18} strokeWidth={1.9} />
+          </button>
 
-          <h1 className="text-xl font-semibold tracking-tight">
-            Admin Dashboard
-          </h1>
+          <div className="min-w-0">
+            <h1 className="truncate font-['Plus_Jakarta_Sans'] text-[15px] font-bold leading-[1.35] tracking-[-0.035em] text-[#182238] sm:text-[16px]">
+              Admin Dashboard
+            </h1>
+
+            <div className="mt-[3px] flex items-center gap-[6px]">
+              <span className="h-[5px] w-[5px] shrink-0 rounded-full bg-[#42B883]" />
+              <span className="truncate font-['JetBrains_Mono'] text-[10px] font-normal text-[#8994A5]">
+                Portfolio Management
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* Right */}
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="icon"
+        <div className="flex shrink-0 items-center gap-2 sm:gap-[10px]">
+          <button
+            type="button"
             onClick={() => window.open("/", "_blank")}
-            className="border-[#496cbf]/30 hover:bg-[#496cbf]/10"
+            aria-label="Open portfolio"
+            className="flex h-[37px] w-[37px] items-center justify-center rounded-[9px] border border-[#E1E8F3] bg-white text-[#496CBF] shadow-[0_1px_3px_rgba(24,34,56,0.025)] transition-colors duration-200 hover:border-[#C7D5FF] hover:bg-[#EEF2FF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#496CBF]/20"
           >
-            <ExternalLink className="h-4 w-4 text-[#496cbf]" />
-          </Button>
+            <ExternalLink size={16} strokeWidth={1.8} />
+          </button>
 
-          <Button variant="destructive" size="icon" onClick={handleLogout}>
-            <LogOut className="h-4 w-4" />
-          </Button>
+          <button
+            type="button"
+            onClick={handleLogout}
+            aria-label="Logout"
+            className="flex h-[37px] w-[37px] items-center justify-center rounded-[9px] border border-[#F3D8DE] bg-[#FFF6F7] text-[#D94B62] transition-colors duration-200 hover:border-[#F0BBC5] hover:bg-[#FFF0F2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E34D68]/20"
+          >
+            <LogOut size={16} strokeWidth={1.8} />
+          </button>
 
-          {/* Avatar */}
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-r from-[#496cbf] to-indigo-500 flex items-center justify-center text-white text-sm font-semibold shadow-md">
+          <div className="ml-[2px] flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-[10px] bg-[#496CBF] font-['Inter'] text-[12px] font-semibold text-white">
             TB
           </div>
         </div>
