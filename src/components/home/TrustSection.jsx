@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import axios from "axios";
 import { CheckCircle2, FileText, ArrowUpRight } from "lucide-react";
 
 const trustPoints = [
@@ -41,6 +42,39 @@ const TrustSection = () => {
   const sectionRef = useRef(null);
   const [hasStarted, setHasStarted] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [currentExperience, setCurrentExperience] = useState(null);
+
+  useEffect(() => {
+    const fetchExperience = async () => {
+      try {
+        const res = await axios.get("/api/experiences");
+
+        const experiences = Array.isArray(res.data) ? res.data : [];
+
+        const activeExperience = experiences.find((experience) =>
+          /\b(present|current|ongoing)\b/i.test(
+            experience.period?.trim() || "",
+          ),
+        );
+
+        setCurrentExperience(
+          activeExperience
+            ? {
+                ...activeExperience,
+                company: activeExperience.company?.trim() || "",
+              }
+            : null,
+        );
+      } catch (error) {
+        console.error(
+          "Error fetching experience:",
+          error.response?.data || error.message,
+        );
+      }
+    };
+
+    fetchExperience();
+  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -180,15 +214,17 @@ const TrustSection = () => {
         <div className="h-px w-full bg-[#DFE6F1]" />
 
         <div className="flex flex-col gap-5 pt-[37px] sm:pt-[42px] lg:flex-row lg:items-center lg:justify-between">
-          <div className="group flex items-center gap-[10px]">
-            <span className="h-[8px] w-[8px] shrink-0 rounded-full bg-[#496CBF] transition-all duration-300 group-hover:scale-125 group-hover:shadow-[0_0_0_4px_rgba(73,108,191,0.12)]" />
-            <span className="font-body text-[12px] text-[#667A9A] transition-colors duration-300 group-hover:text-[#526783]">
-              Currently engineering at
-            </span>
-            <span className="font-body text-[12px] font-bold text-[#182238] transition-colors duration-300 group-hover:text-[#496CBF]">
-              Buildupnet
-            </span>
-          </div>
+          {currentExperience && (
+            <div className="group flex items-center gap-[10px]">
+              <span className="h-[8px] w-[8px] shrink-0 rounded-full bg-[#496CBF] transition-all duration-300 group-hover:scale-125 group-hover:shadow-[0_0_0_4px_rgba(73,108,191,0.12)]" />
+              <span className="font-body text-[12px] text-[#667A9A] transition-colors duration-300 group-hover:text-[#526783]">
+                Currently engineering at
+              </span>
+              <span className="font-body text-[12px] font-bold text-[#182238] transition-colors duration-300 group-hover:text-[#496CBF]">
+                {currentExperience.company}
+              </span>
+            </div>
+          )}
 
           <div className="flex flex-wrap items-center gap-6 sm:gap-7">
             <div className="group flex items-center gap-[8px]">
