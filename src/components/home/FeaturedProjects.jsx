@@ -12,7 +12,6 @@ import {
   Scissors,
   Network,
   Code2,
-  Zap,
 } from "lucide-react";
 
 const projectThemes = [
@@ -72,7 +71,7 @@ function ProjectCard({ project, index }) {
   return (
     <Link
       href={`/projects/${project._id}`}
-      className="group relative block min-w-0 overflow-hidden rounded-[13px] border border-[#E1E8F3] bg-white transition-all duration-300 hover:-translate-y-[3px] hover:border-[#C7D2FE] hover:shadow-[0_14px_35px_rgba(24,34,56,0.07)]"
+      className="group relative block min-w-0 overflow-hidden rounded-[13px] border border-[#E1E8F3] bg-white transition-all duration-300 ease-out hover:-translate-y-[5px] hover:border-[#C7D2FE] hover:shadow-[0_18px_42px_rgba(24,34,56,0.09)] active:translate-y-0"
     >
       <div
         className={`relative flex h-[210px] items-center justify-center overflow-hidden bg-gradient-to-br ${theme.background}`}
@@ -81,29 +80,33 @@ function ProjectCard({ project, index }) {
           <img
             src={project.image}
             alt={project.title || "Project preview"}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
             loading="lazy"
           />
         )}
 
-        <div className="absolute inset-0 bg-white/10 transition-colors duration-300 group-hover:bg-white/20" />
+        <div className="absolute inset-0 bg-white/10 transition-all duration-500 group-hover:bg-white/20" />
+
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#182238]/10 via-transparent to-white/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+        <div className="pointer-events-none absolute bottom-0 left-0 h-[3px] w-0 bg-[#496CBF] transition-all duration-500 ease-out group-hover:w-full" />
       </div>
 
       <div className="px-[22px] pb-[21px] pt-[20px]">
         <div className="flex items-center justify-between gap-3">
-          <h3 className="min-w-0 truncate font-heading text-[15px] font-semibold leading-[22px] tracking-[-0.35px] text-[#182238]">
+          <h3 className="min-w-0 truncate font-heading text-[15px] font-semibold leading-[22px] tracking-[-0.35px] text-[#182238] transition-colors duration-300 group-hover:text-[#496CBF]">
             {project?.title || "Untitled Project"}
           </h3>
 
           <ArrowUpRight
             size={17}
             strokeWidth={1.7}
-            className="shrink-0 text-[#C5CFDC] transition-all duration-300 group-hover:-translate-y-[2px] group-hover:translate-x-[2px] group-hover:text-[#496CBF]"
+            className="shrink-0 text-[#C5CFDC] transition-all duration-300 ease-out group-hover:-translate-y-[3px] group-hover:translate-x-[3px] group-hover:text-[#496CBF]"
             aria-hidden="true"
           />
         </div>
 
-        <p className="mt-[7px] font-body text-[13px] font-normal leading-[20px] text-[#667A9A]">
+        <p className="mt-[7px] font-body text-[13px] font-normal leading-[20px] text-[#667A9A] transition-colors duration-300 group-hover:text-[#526783]">
           {project?.description?.length > 150
             ? `${project.description.slice(0, 150)}...`
             : project?.description || "Explore this development project."}
@@ -115,7 +118,7 @@ function ProjectCard({ project, index }) {
               {keywords.slice(0, 4).map((keyword, keywordIndex) => (
                 <span
                   key={`${keyword}-${keywordIndex}`}
-                  className={`inline-flex items-center rounded-[5px] px-[9px] py-[4px] font-mono text-[9px] leading-[12px] ${
+                  className={`inline-flex items-center rounded-[5px] px-[9px] py-[4px] font-mono text-[9px] leading-[12px] transition-all duration-300 hover:-translate-y-[2px] hover:shadow-sm ${
                     keywordIndex === 2
                       ? theme.tagColor
                       : "bg-[#F1F5F9] text-[#52647E]"
@@ -126,9 +129,13 @@ function ProjectCard({ project, index }) {
               ))}
             </div>
 
-            <span className="inline-flex shrink-0 items-center gap-[5px] font-body text-[12px] font-semibold text-[#496CBF] transition-colors duration-200 group-hover:text-[#294B9C]">
+            <span className="inline-flex shrink-0 items-center gap-[5px] font-body text-[12px] font-semibold text-[#496CBF] transition-all duration-300 group-hover:gap-[9px] group-hover:text-[#294B9C]">
               View case
-              <ArrowRight size={13} strokeWidth={1.8} />
+              <ArrowRight
+                size={13}
+                strokeWidth={1.8}
+                className="transition-transform duration-300 group-hover:translate-x-[2px]"
+              />
             </span>
           </div>
         </div>
@@ -207,10 +214,10 @@ export default function FeaturedProjects() {
       <div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-0">
         <div className="grid grid-cols-1 items-start gap-7 md:grid-cols-[1.55fr_1fr] md:gap-[55px]">
           <div>
-            <div className="flex items-center gap-[10px]">
-              <span className="h-[2px] w-[23px] bg-[#496CBF]" />
+            <div className="group flex items-center gap-[10px]">
+              <span className="h-[2px] w-[23px] origin-left bg-[#496CBF] transition-all duration-300 group-hover:w-[38px]" />
 
-              <span className="font-mono text-[10px] font-medium uppercase tracking-[0.25px] text-[#496CBF]">
+              <span className="font-mono text-[10px] font-medium uppercase tracking-[0.25px] text-[#496CBF] transition-colors duration-300 group-hover:text-[#304F9B]">
                 Selected Work
               </span>
             </div>
@@ -218,28 +225,19 @@ export default function FeaturedProjects() {
             <h2 className="mt-[20px] font-heading text-[34px] font-bold leading-[1.18] tracking-[-1.3px] text-[#182238] sm:text-[40px] lg:text-[44px]">
               Selected projects.
               <br />
-              Real <span className="text-[#496CBF]">engineering.</span>
+              Real{" "}
+              <span className="inline-block text-[#496CBF] transition-colors duration-300 hover:text-[#304F9B]">
+                engineering.
+              </span>
             </h2>
           </div>
 
           <div className="pt-0 md:pt-[2px]">
-            <p className="max-w-[455px] font-body text-[15px] font-normal leading-[27px] text-[#667A9A] sm:text-[16px]">
+            <p className="max-w-[455px] font-body text-[15px] font-normal leading-[27px] text-[#667A9A] transition-colors duration-300 hover:text-[#526783] sm:text-[16px]">
               A showcase of my development projects demonstrating modern
               technology stacks, clean architecture, and practical solutions.
               Each project represents real-world engineering work.
             </p>
-
-            <div className="mt-[16px] inline-flex min-h-[27px] items-center gap-[8px] rounded-[7px] border border-[#C7D2FE] bg-[#EEF2FF] px-[11px] py-[5px]">
-              <Zap
-                size={13}
-                strokeWidth={1.8}
-                className="shrink-0 text-[#496CBF]"
-              />
-
-              <span className="font-mono text-[10px] tracking-[0.1px] text-[#385EB8]">
-                Projects from /api/projects
-              </span>
-            </div>
           </div>
         </div>
 
@@ -257,8 +255,11 @@ export default function FeaturedProjects() {
               />
             ))
           ) : (
-            <div className="col-span-full flex min-h-[260px] flex-col items-center justify-center rounded-[13px] border border-[#E1E8F3] bg-white px-6 py-12 text-center">
-              <Code2 size={26} className="text-[#496CBF]" />
+            <div className="col-span-full flex min-h-[260px] flex-col items-center justify-center rounded-[13px] border border-[#E1E8F3] bg-white px-6 py-12 text-center transition-all duration-300 hover:border-[#C7D2FE] hover:shadow-[0_10px_30px_rgba(24,34,56,0.04)]">
+              <Code2
+                size={26}
+                className="text-[#496CBF] transition-transform duration-300 hover:scale-110"
+              />
 
               <h3 className="mt-3 font-heading text-[15px] font-semibold text-[#182238]">
                 No projects available yet
@@ -275,19 +276,19 @@ export default function FeaturedProjects() {
           <div className="flex flex-col items-center justify-center gap-[13px] sm:flex-row sm:gap-[13px]">
             <Link
               href="/projects"
-              className="group inline-flex min-h-[48px] items-center justify-center gap-[12px] rounded-[8px] border border-[#E1E8F3] bg-white px-[28px] py-[10px] font-body text-[14px] font-medium text-[#182238] transition-all duration-300 hover:border-[#C7D2FE] hover:bg-[#F8FAFF]"
+              className="group inline-flex min-h-[48px] items-center justify-center gap-[12px] rounded-[8px] border border-[#E1E8F3] bg-white px-[28px] py-[10px] font-body text-[14px] font-medium text-[#182238] transition-all duration-300 ease-out hover:-translate-y-[2px] hover:border-[#C7D2FE] hover:bg-[#F8FAFF] hover:shadow-[0_8px_18px_rgba(24,34,56,0.06)] active:translate-y-0"
             >
               Explore All Projects
               <ArrowRight
                 size={14}
                 strokeWidth={1.8}
-                className="text-[#496CBF] transition-transform duration-300 group-hover:translate-x-[3px]"
+                className="text-[#496CBF] transition-transform duration-300 group-hover:translate-x-[4px]"
               />
             </Link>
 
             {!loading && projects.length > 0 && (
-              <span className="inline-flex items-center gap-[7px] font-mono text-[12px] tracking-[0.1px] text-[#8CA0C0]">
-                <span className="h-[4px] w-[4px] rounded-full bg-[#496CBF]" />
+              <span className="inline-flex items-center gap-[7px] font-mono text-[12px] tracking-[0.1px] text-[#8CA0C0] transition-colors duration-300 hover:text-[#496CBF]">
+                <span className="h-[4px] w-[4px] rounded-full bg-[#496CBF] transition-transform duration-300 hover:scale-150" />
                 Showing {featuredProjects.length} of {projects.length} projects
               </span>
             )}

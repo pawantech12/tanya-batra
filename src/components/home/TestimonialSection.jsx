@@ -49,10 +49,6 @@ function getAvatarTheme(index) {
   return avatarThemes[index % avatarThemes.length];
 }
 
-// ---------------------------------------------
-// TESTIMONIAL CARD
-// ---------------------------------------------
-
 function TestimonialCard({ testimonial, index }) {
   const theme = getAvatarTheme(index);
 
@@ -60,41 +56,35 @@ function TestimonialCard({ testimonial, index }) {
     <article
       itemScope
       itemType="https://schema.org/Review"
-      className="flex h-full min-h-[310px] flex-col rounded-[14px] border border-[#E1E8F3] bg-[#F8FAFC] px-[24px] pb-[24px] pt-[25px] transition-all duration-300 hover:-translate-y-[3px] hover:border-[#C7D2FE] hover:shadow-[0_12px_28px_rgba(24,34,56,0.05)] sm:px-[28px]"
+      className="group relative flex h-full flex-col overflow-hidden rounded-[14px] border border-[#E1E8F3] bg-[#F8FAFC] px-[24px] pb-[24px] pt-[25px] transition-all duration-300 ease-out hover:-translate-y-[4px] hover:border-[#C7D2FE] hover:bg-white hover:shadow-[0_16px_38px_rgba(24,34,56,0.08)] active:translate-y-0 sm:px-[28px]"
     >
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] origin-left scale-x-0 bg-[#496CBF] transition-transform duration-500 ease-out group-hover:scale-x-100" />
+
       <div className="flex items-start justify-between gap-3">
         <Quote
           size={38}
           strokeWidth={0}
           fill="#D7E0F4"
-          className="shrink-0 rotate-180 text-[#D7E0F4]"
+          className="shrink-0 rotate-180 text-[#D7E0F4] transition-all duration-300 ease-out group-hover:-translate-y-[3px] group-hover:scale-110 group-hover:text-[#C7D5F4]"
           aria-hidden="true"
         />
-
-        <div className="mt-[5px] inline-flex shrink-0 items-center gap-[6px] rounded-full bg-[#EEF2FF] px-[9px] py-[4px]">
-          <Zap size={10} strokeWidth={1.9} className="text-[#496CBF]" />
-
-          <span className="font-mono text-[9px] leading-[12px] text-[#496CBF]">
-            via /api/testimonials
-          </span>
-        </div>
       </div>
 
       <p
         itemProp="reviewBody"
-        className="mt-[10px] flex-1 font-body text-[14px] font-normal leading-[24px] text-[#182238] sm:text-[15px] sm:leading-[26px]"
+        className="mt-[10px] flex-1 font-body text-[14px] font-normal leading-[24px] text-[#182238] transition-colors duration-300 group-hover:text-[#243653] sm:text-[15px] sm:leading-[26px]"
       >
         "{testimonial?.content || "Client feedback."}"
       </p>
 
-      <div className="mt-[22px] border-t border-[#E1E8F3] pt-[22px]">
+      <div className="mt-[22px] border-t border-[#E1E8F3] pt-[22px] transition-colors duration-300 group-hover:border-[#D5DFF0]">
         <div className="flex min-w-0 items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-[12px]">
             <div
-              className={`flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full border ${theme.background} ${theme.border}`}
+              className={`flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full border transition-all duration-300 ease-out group-hover:scale-110 group-hover:shadow-sm ${theme.background} ${theme.border}`}
             >
               <span
-                className={`font-body text-[10px] font-semibold ${theme.color}`}
+                className={`font-body text-[10px] font-semibold transition-transform duration-300 group-hover:scale-110 ${theme.color}`}
               >
                 {getInitials(testimonial?.name)}
               </span>
@@ -103,18 +93,18 @@ function TestimonialCard({ testimonial, index }) {
             <div className="min-w-0">
               <p
                 itemProp="author"
-                className="truncate font-heading text-[12px] font-semibold leading-[18px] text-[#182238] sm:text-[13px]"
+                className="truncate font-heading text-[12px] font-semibold leading-[18px] text-[#182238] transition-colors duration-300 group-hover:text-[#496CBF] sm:text-[13px]"
               >
                 {testimonial?.name || "Client"}
               </p>
 
-              <p className="mt-[1px] truncate font-mono text-[10px] leading-[15px] text-[#71839F]">
+              <p className="mt-[1px] truncate font-mono text-[10px] leading-[15px] text-[#71839F] transition-colors duration-300 group-hover:text-[#526783]">
                 {testimonial?.role || "Collaborator"}
               </p>
             </div>
           </div>
 
-          <span className="max-w-[115px] shrink-0 truncate rounded-[5px] bg-[#F1F5F9] px-[9px] py-[5px] font-mono text-[10px] leading-[13px] text-[#71839F]">
+          <span className="max-w-[115px] shrink-0 truncate rounded-[5px] bg-[#F1F5F9] px-[9px] py-[5px] font-mono text-[10px] leading-[13px] text-[#71839F] transition-all duration-300 group-hover:bg-[#EEF2FF] group-hover:text-[#496CBF]">
             {testimonial?.type || "Client"}
           </span>
         </div>
@@ -122,10 +112,6 @@ function TestimonialCard({ testimonial, index }) {
     </article>
   );
 }
-
-// ---------------------------------------------
-// LOADING SKELETON
-// ---------------------------------------------
 
 function TestimonialSkeleton() {
   return (
@@ -153,17 +139,9 @@ function TestimonialSkeleton() {
   );
 }
 
-// ---------------------------------------------
-// MAIN TESTIMONIAL SECTION
-// ---------------------------------------------
-
 const TestimonialSection = () => {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // -------------------------------------------
-  // FETCH TESTIMONIALS
-  // -------------------------------------------
 
   useEffect(() => {
     const fetchData = async () => {
@@ -190,10 +168,6 @@ const TestimonialSection = () => {
     fetchData();
   }, []);
 
-  // -------------------------------------------
-  // RENDER
-  // -------------------------------------------
-
   return (
     <section
       id="testimonials"
@@ -201,15 +175,15 @@ const TestimonialSection = () => {
       className="relative overflow-hidden bg-white py-[85px] sm:py-[95px] lg:py-[100px]"
     >
       <div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-0">
-        {/* SECTION HEADER */}
-
         <div className="mx-auto max-w-[650px] text-center">
-          <div className="flex items-center justify-center gap-[10px]">
-            <span className="h-[2px] w-[28px] bg-[#496CBF]" />
+          <div className="group flex items-center justify-center gap-[10px]">
+            <span className="h-[2px] w-[28px] origin-right bg-[#496CBF] transition-all duration-300 group-hover:w-[40px]" />
 
-            <span className="font-mono text-[10px] font-medium uppercase tracking-[0.25px] text-[#496CBF]">
+            <span className="font-mono text-[10px] font-medium uppercase tracking-[0.25px] text-[#496CBF] transition-colors duration-300 group-hover:text-[#304F9B]">
               Client Feedback
             </span>
+
+            <span className="h-[2px] w-[28px] origin-left bg-[#496CBF] transition-all duration-300 group-hover:w-[40px]" />
           </div>
 
           <h2
@@ -218,16 +192,16 @@ const TestimonialSection = () => {
           >
             What people say about
             <br className="hidden sm:block" />
-            working together.
+            <span className="inline-block transition-colors duration-300 hover:text-[#496CBF]">
+              working together.
+            </span>
           </h2>
 
-          <p className="mx-auto mt-[16px] max-w-[590px] font-body text-[15px] font-normal leading-[27px] text-[#667A9A] sm:text-[16px]">
+          <p className="mx-auto mt-[16px] max-w-[590px] font-body text-[15px] font-normal leading-[27px] text-[#667A9A] transition-colors duration-300 hover:text-[#526783] sm:text-[16px]">
             Real feedback from clients and collaborators highlighting my
             approach to clean code, scalability, and professional delivery.
           </p>
         </div>
-
-        {/* TESTIMONIAL CONTENT */}
 
         <div className="mt-[48px]">
           {loading ? (
@@ -239,11 +213,11 @@ const TestimonialSection = () => {
               </div>
 
               <div className="mt-[88px] flex flex-col items-center justify-center text-center">
-                <div className="flex h-[44px] w-[44px] items-center justify-center rounded-[12px] border border-[#E1E8F3] bg-[#F1F5F9]">
+                <div className="flex h-[44px] w-[44px] items-center justify-center rounded-[12px] border border-[#E1E8F3] bg-[#F1F5F9] transition-all duration-300 hover:scale-105 hover:border-[#C7D2FE] hover:bg-[#EEF2FF]">
                   <MessageSquare
                     size={18}
                     strokeWidth={1.7}
-                    className="text-[#8CA0C0]"
+                    className="text-[#8CA0C0] transition-colors duration-300"
                   />
                 </div>
 
@@ -252,8 +226,7 @@ const TestimonialSection = () => {
                 </p>
 
                 <p className="mt-[5px] font-mono text-[10px] leading-[16px] text-[#8CA0C0]">
-                  Client feedback will appear here once loaded from{" "}
-                  /api/testimonials
+                  Client feedback will appear here once loaded
                 </p>
 
                 <RefreshCw
@@ -265,7 +238,7 @@ const TestimonialSection = () => {
           ) : testimonials.length > 0 ? (
             <Swiper
               modules={[Autoplay, Pagination]}
-              className="testimonial-swiper !pb-[48px]"
+              className="testimonial-swiper !pb-[48px] !pt-1"
               spaceBetween={20}
               slidesPerView={1}
               loop={testimonials.length > 3}
@@ -307,14 +280,14 @@ const TestimonialSection = () => {
               ))}
             </Swiper>
           ) : (
-            <div className="flex min-h-[260px] flex-col items-center justify-center rounded-[14px] border border-[#E1E8F3] bg-[#F8FAFC] px-6 py-12 text-center">
+            <div className="group flex min-h-[260px] flex-col items-center justify-center rounded-[14px] border border-[#E1E8F3] bg-[#F8FAFC] px-6 py-12 text-center transition-all duration-300 hover:border-[#C7D2FE] hover:bg-[#F8FAFF] hover:shadow-[0_12px_30px_rgba(24,34,56,0.05)]">
               <MessageSquareQuote
                 size={27}
                 strokeWidth={1.6}
-                className="text-[#496CBF]"
+                className="text-[#496CBF] transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6"
               />
 
-              <h3 className="mt-4 font-heading text-[15px] font-semibold text-[#182238]">
+              <h3 className="mt-4 font-heading text-[15px] font-semibold text-[#182238] transition-colors duration-300 group-hover:text-[#496CBF]">
                 No testimonials available yet
               </h3>
 
@@ -326,8 +299,6 @@ const TestimonialSection = () => {
           )}
         </div>
       </div>
-
-      {/* SWIPER PAGINATION STYLES */}
 
       <style jsx global>{`
         .testimonial-swiper .swiper-pagination {
@@ -344,13 +315,29 @@ const TestimonialSection = () => {
           margin: 0 !important;
           background: #dce4f1;
           opacity: 1;
-          transition: all 0.25s ease;
+          transition:
+            width 0.3s ease,
+            height 0.3s ease,
+            background-color 0.3s ease,
+            transform 0.3s ease;
+        }
+
+        .testimonial-swiper .swiper-pagination-bullet:hover {
+          background: #9aafd9;
+          transform: scale(1.2);
         }
 
         .testimonial-swiper .swiper-pagination-bullet-active {
-          width: 7px;
-          height: 7px;
+          width: 18px;
+          height: 6px;
+          border-radius: 999px;
           background: #496cbf;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .testimonial-swiper .swiper-pagination-bullet {
+            transition: none;
+          }
         }
       `}</style>
     </section>
